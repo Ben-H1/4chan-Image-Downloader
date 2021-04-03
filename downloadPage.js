@@ -5,8 +5,9 @@ document.getElementById(`invertSelectionButton`) .addEventListener(`click`, inve
 document.getElementById(`downloadSelectedButton`).addEventListener(`click`, downloadSelected);
 document.getElementById(`refreshButton`)         .addEventListener(`click`, refreshImages);
 
-var imageLinks = null;
-var tabId      = null;
+var imageLinks   = null;
+var tabId        = null;
+var threadNumber = null;
 
 var imageSize      = 300;
 var viewportWidth  = document.documentElement.clientWidth;
@@ -17,13 +18,19 @@ var objectFit      = `cover`; //fill, contain, cover, scale-down, none
 
 chrome.storage.sync.get([`imageLinks`], function(data) {
     imageLinks = data.imageLinks;
+
     chrome.storage.sync.get([`tabId`], function(data) {
         tabId = data.tabId;
-        chrome.storage.sync.get([`imageSize`], function(data) {
-            //imageSize = data.imageSize;
-            createImages();
+
+        chrome.storage.sync.get([`threadNumber`], function (data) {
+            threadNumber = data.threadNumber;
+            document.querySelector(`#downloadPathBox`).value += `\\${threadNumber}`;
+            
+            chrome.storage.sync.get([`imageSize`], function(data) {
+                //imageSize = data.imageSize;
+                createImages();
+            });
         });
-        
     });
 });
 

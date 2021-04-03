@@ -7,3 +7,10 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         sendResponse(imageLinks);
     }
 });
+
+chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+    if (msg.text === 'getThreadNumber') {
+        var threadNumber = document.querySelectorAll(`.opContainer`)[0].childNodes[0].childNodes[2].childNodes[9].childNodes[1].innerText;
+        sendResponse(threadNumber);
+    }
+});

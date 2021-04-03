@@ -6,12 +6,14 @@ document.getElementById(`downloadSelectedButton`).addEventListener(`click`, down
 document.getElementById(`refreshButton`)         .addEventListener(`click`, refreshImages);
 
 var imageLinks = null;
-var tabId = null;
+var tabId      = null;
+
 var imageSize      = 300;
 var viewportWidth  = document.documentElement.clientWidth;
 var imagesPerRow   = Math.floor(viewportWidth / imageSize);
 var checkboxScale  = 2;
 var checkboxMargin = 8 * checkboxScale;
+var objectFit      = `cover`; //fill, contain, cover, scale-down, none
 
 chrome.storage.sync.get([`imageLinks`], function(data) {
     imageLinks = data.imageLinks;
@@ -24,8 +26,6 @@ chrome.storage.sync.get([`imageLinks`], function(data) {
         
     });
 });
-
-
 
 function createImages() {
     for (var i = 0; i < imageLinks.length; i += imagesPerRow) {
@@ -43,6 +43,7 @@ function createImages() {
                 if (currentImageLink.includes(`webm`)) {
                     subElement          = document.createElement(`video`);
                     subElement.autoplay = true;
+                    subElement.loop     = true;
         
                     var source  = document.createElement(`source`);
                     source.src  = currentImageLink;
@@ -53,13 +54,13 @@ function createImages() {
     
                     subElement.width  = `${imageSize}`;
                     subElement.height = `${imageSize}`;
-                    subElement.style.objectFit = `cover`;
+                    subElement.style.objectFit = objectFit;
                 } else {
                     subElement        = document.createElement(`img`);
                     subElement.src    = currentImageLink;
                     subElement.width  = `${imageSize}`;
                     subElement.height = `${imageSize}`;
-                    subElement.style.objectFit = `cover`;
+                    subElement.style.objectFit = objectFit;
                 }
 
                 subElement.style.zIndex = `1`;

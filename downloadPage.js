@@ -7,19 +7,25 @@ document.getElementById(`refreshButton`)         .addEventListener(`click`, refr
 
 var imageLinks = null;
 var tabId = null;
+var imageSize      = 300;
+var viewportWidth  = document.documentElement.clientWidth;
+var imagesPerRow   = Math.floor(viewportWidth / imageSize);
+var checkboxScale  = 2;
+var checkboxMargin = 8 * checkboxScale;
 
 chrome.storage.sync.get([`imageLinks`], function(data) {
     imageLinks = data.imageLinks;
     chrome.storage.sync.get([`tabId`], function(data) {
         tabId = data.tabId;
-        createImages();
+        chrome.storage.sync.get([`imageSize`], function(data) {
+            //imageSize = data.imageSize;
+            createImages();
+        });
+        
     });
 });
 
-var imagesPerRow   = 5;
-var imageSize      = 200;
-var checkboxScale  = 2;
-var checkboxMargin = 8 * checkboxScale;
+
 
 function createImages() {
     for (var i = 0; i < imageLinks.length; i += imagesPerRow) {

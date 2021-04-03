@@ -9,7 +9,7 @@
     },
     "content_scripts": [
         {
-            "matches": ["*://boards.4chan.org/*"],
+            "matches": ["*://boards.4chan.org/*", "*://boards.4channel.org/*"],
             "js": ["content.js"]
         }
     ],

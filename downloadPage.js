@@ -103,7 +103,7 @@ function check(element) {
 function downloadAll() {
     document.querySelectorAll(`.checkbox`).forEach((element) => {
         var link = element.childNodes[0];
-        chrome.downloads.download({url: link.href});
+        downloadFile(link.href);
     });
 }
 
@@ -129,9 +129,19 @@ function downloadSelected() {
     document.querySelectorAll(`.checkbox`).forEach((element) => {
         if (element.checked) {
             var link = element.childNodes[0];
-            chrome.downloads.download({url: link.href});
+            downloadFile(link.href);
         }
     });
+}
+
+function downloadFile(file) {
+    var fileNameParts = file.split(`/`);
+    var fileName = fileNameParts[fileNameParts.length - 1];
+    var path = document.querySelector(`#downloadPathBox`).value;
+    path += fileName;
+    console.log(path);
+
+    chrome.downloads.download({url: file, filename: path});
 }
 
 function refreshImages() {

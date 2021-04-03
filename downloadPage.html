@@ -14,11 +14,26 @@
                 height: 50px;
                 margin-right: 20px;
             }
+            #selectAllButton {
+                margin-right: 15px;
+            }
+            #selectNoneButton {
+                width:  55px;
+                height: 55px;
+            }
             #topButtons {
                 display: none;
             }
             #normalButtons {
                 display: none;
+            }
+            #downloadPathBlock {
+                float: right;
+            }
+            span {
+                color: white;
+                vertical-align: top;
+                font-size: 20px;
             }
         </style>
         <title>4chan Image Downloader</title>
@@ -32,6 +47,10 @@
                 <input type="image" src="images/Invert Selection White.png"  id="invertSelectionButton"  class="topButtons" />
                 <input type="image" src="images/Download Selected White.png" id="downloadSelectedButton" class="topButtons" />
                 <input type="image" src="images/Refresh White.png"           id="refreshButton"          class="topButtons" />
+                <span id="downloadPathBlock">
+                    <span>Download path:</span>
+                    <input type="text" id="downloadPathBox" value="4chan\" />
+                </span>
             </div>
             <div id="normalButtons">
                 <input type="button" id="downloadAllButton"      value="Download All" />

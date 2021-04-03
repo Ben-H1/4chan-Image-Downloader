@@ -138,6 +138,9 @@ function downloadFile(file) {
     var fileNameParts = file.split(`/`);
     var fileName = fileNameParts[fileNameParts.length - 1];
     var path = document.querySelector(`#downloadPathBox`).value;
+    if (path.charAt(path.length - 1) != `\\` && path.charAt(path.length - 1) != `/`) {
+        path += `\\`;
+    }
     path += fileName;
     console.log(path);
 

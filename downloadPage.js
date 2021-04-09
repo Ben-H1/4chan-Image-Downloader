@@ -5,9 +5,17 @@ document.getElementById(`invertSelectionButton`) .addEventListener(`click`, inve
 document.getElementById(`downloadSelectedButton`).addEventListener(`click`, downloadSelected);
 document.getElementById(`refreshButton`)         .addEventListener(`click`, refreshImages);
 
+document.getElementById(`downloadAllButton2`)     .addEventListener(`click`, downloadAll);
+document.getElementById(`selectAllButton2`)       .addEventListener(`click`, selectAll);
+document.getElementById(`selectNoneButton2`)      .addEventListener(`click`, selectNone);
+document.getElementById(`invertSelectionButton2`) .addEventListener(`click`, invertSelection);
+document.getElementById(`downloadSelectedButton2`).addEventListener(`click`, downloadSelected);
+document.getElementById(`refreshButton2`)         .addEventListener(`click`, refreshImages);
+
 var imageLinks   = null;
 var tabId        = null;
 var threadNumber = null;
+var threadTitle  = null;
 
 var imageSize      = 300;
 var viewportWidth  = document.documentElement.clientWidth;
@@ -22,13 +30,17 @@ chrome.storage.sync.get([`imageLinks`], function(data) {
     chrome.storage.sync.get([`tabId`], function(data) {
         tabId = data.tabId;
 
-        chrome.storage.sync.get([`threadNumber`], function (data) {
+        chrome.storage.sync.get([`threadNumber`], function(data) {
             threadNumber = data.threadNumber;
-            document.querySelector(`#downloadPathBox`).value += `\\${threadNumber}`;
             
-            chrome.storage.sync.get([`imageSize`], function(data) {
-                //imageSize = data.imageSize;
-                createImages();
+            chrome.storage.sync.get([`threadTitle`], function(data) {
+                threadTitle = data.threadTitle;
+                document.querySelector(`#downloadPathBox`).value += `\\${threadNumber} - ${threadTitle}`;
+
+                chrome.storage.sync.get([`imageSize`], function(data) {
+                    //imageSize = data.imageSize;
+                    createImages();
+                });
             });
         });
     });

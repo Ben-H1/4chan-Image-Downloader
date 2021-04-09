@@ -9,15 +9,15 @@
                 margin: 2px;
                 outline: none;
             }
-            .topButtons {
+            .topButtons, .bottomButtons {
                 width:  50px;
                 height: 50px;
                 margin-right: 20px;
             }
-            #selectAllButton {
+            #selectAllButton, #selectAllButton2 {
                 margin-right: 15px;
             }
-            #selectNoneButton {
+            #selectNoneButton, #selectNoneButton2 {
                 width:  55px;
                 height: 55px;
             }
@@ -40,7 +40,7 @@
     </head>
     <body>
         <div id="topButtons">
-            <div id="imageButtons">
+            <div class="imageButtons">
                 <input type="image" src="images/Download All White.png"      id="downloadAllButton"      class="topButtons" />
                 <input type="image" src="images/Select All White.png"        id="selectAllButton"        class="topButtons" />
                 <input type="image" src="images/Select None White.png"       id="selectNoneButton"       class="topButtons" />
@@ -68,6 +68,17 @@
         <div>
             <table id="imageTable">
             </table>
+        </div>
+        <br />
+        <div id="bottomButtons">
+            <div class="imageButtons">
+                <input type="image" src="images/Download All White.png"      id="downloadAllButton2"      class="bottomButtons" />
+                <input type="image" src="images/Select All White.png"        id="selectAllButton2"        class="bottomButtons" />
+                <input type="image" src="images/Select None White.png"       id="selectNoneButton2"       class="bottomButtons" />
+                <input type="image" src="images/Invert Selection White.png"  id="invertSelectionButton2"  class="bottomButtons" />
+                <input type="image" src="images/Download Selected White.png" id="downloadSelectedButton2" class="bottomButtons" />
+                <input type="image" src="images/Refresh White.png"           id="refreshButton2"          class="bottomButtons" />
+            </div>
         </div>
         <script src="downloadPage.js"></script>
     </body>

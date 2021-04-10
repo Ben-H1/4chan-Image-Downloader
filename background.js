@@ -1,3 +1,4 @@
+
 chrome.runtime.onInstalled.addListener(function() {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
         chrome.declarativeContent.onPageChanged.addRules([{
@@ -13,12 +14,3 @@ chrome.runtime.onInstalled.addListener(function() {
         }]);
     });
 });
-
-chrome.browserAction.onClicked.addListener(function (tab) {
-    chrome.tabs.sendMessage(tab.id, {text: 'report_back'}, doStuffWithDom);
-});
-
-function doStuffWithDom(document) {
-    console.log("here");
-    window.open("http://www.google.com");
-}

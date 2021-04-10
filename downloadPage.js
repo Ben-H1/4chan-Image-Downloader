@@ -34,7 +34,8 @@ chrome.storage.sync.get([`imageLinks`], function(data) {
             threadNumber = data.threadNumber;
             
             chrome.storage.sync.get([`threadTitle`], function(data) {
-                threadTitle = data.threadTitle;
+                threadTitle = removeInvalidCharactersFromThreadTitle(data.threadTitle);
+
                 document.querySelector(`#downloadPathBox`).value += `\\${threadNumber} - ${threadTitle}`;
 
                 chrome.storage.sync.get([`imageSize`], function(data) {
@@ -179,4 +180,19 @@ function refreshImages() {
             createImages();
         });
     });
+}
+
+function removeInvalidCharactersFromThreadTitle(threadTitle) {
+    var newThreadTitle = ``;
+    var invalidChars   = [`\\`, `/`, `:`, `*`, `?`, `"`, `<`, `>`, `|`];
+
+    for (var i = 0; i < threadTitle.length; i++) {
+        var currentChar = threadTitle.charAt(i);
+
+        if (! invalidChars.includes(currentChar)) {
+                newThreadTitle += currentChar;
+        }
+    }
+
+    return newThreadTitle;
 }

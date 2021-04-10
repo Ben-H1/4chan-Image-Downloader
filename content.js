@@ -32,8 +32,14 @@ function getImageLinks() {
 }
 
 function getThreadNumber() {
-    var threadNumber = document.querySelectorAll(`.opContainer`)[0].childNodes[0].childNodes[2].childNodes[9].childNodes[1].innerText;
-    
+    var threadNumber = ``;
+
+    try {
+        threadNumber = document.querySelectorAll(`.opContainer`)[0].childNodes[0].childNodes[2].childNodes[9].childNodes[1].innerText;
+    } catch (e) {
+        threadNumber = document.querySelectorAll(`.opContainer`)[0].childNodes[0].childNodes[2].childNodes[8].childNodes[1].innerText;
+    }
+
     return threadNumber;
 }
 

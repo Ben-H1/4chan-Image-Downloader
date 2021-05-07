@@ -27,7 +27,7 @@
             #topButtons {
                 display: none;
             }
-            #normalButtons {
+            .normalButtons {
                 display: none;
             }
             #downloadPathBlock {
@@ -44,18 +44,18 @@
     <body>
         <div id="topButtons">
             <div class="imageButtons">
-                <input type="image" src="images/Download All White.png"      id="downloadAllButton"      class="topButtons" />
-                <input type="image" src="images/Select All White.png"        id="selectAllButton"        class="topButtons" />
-                <input type="image" src="images/Select None White.png"       id="selectNoneButton"       class="topButtons" />
-                <input type="image" src="images/Invert Selection White.png"  id="invertSelectionButton"  class="topButtons" />
-                <input type="image" src="images/Download Selected White.png" id="downloadSelectedButton" class="topButtons" />
-                <input type="image" src="images/Refresh White.png"           id="refreshButton"          class="topButtons" />
+                <input type="image" src="images/Download All White.png"      id="downloadAllButton"      class="topButtons" title="Download All"      alt="Download All" />
+                <input type="image" src="images/Select All White.png"        id="selectAllButton"        class="topButtons" title="Select All"        alt="Select All" />
+                <input type="image" src="images/Select None White.png"       id="selectNoneButton"       class="topButtons" title="Select None"       alt="Select None" />
+                <input type="image" src="images/Invert Selection White.png"  id="invertSelectionButton"  class="topButtons" title="Invert Selection"  alt="Invert Selection" />
+                <input type="image" src="images/Download Selected White.png" id="downloadSelectedButton" class="topButtons" title="Download Selected" alt="Download Selected" />
+                <input type="image" src="images/Refresh White.png"           id="refreshButton"          class="topButtons" title="Refresh"           alt="Refresh" />
                 <span id="downloadPathBlock">
                     <span>Download path: Downloads\</span>
-                    <input type="text" id="downloadPathBox" value="4chan" />
+                    <input type="text" id="downloadPathBox" />
                 </span>
             </div>
-            <div id="normalButtons">
+            <div class="normalButtons">
                 <input type="button" id="downloadAllButton"      value="Download All" />
                 <br />
                 <input type="button" id="selectAllButton"        value="Select All" />
@@ -75,12 +75,23 @@
         <br />
         <div id="bottomButtons">
             <div class="imageButtons">
-                <input type="image" src="images/Download All White.png"      id="downloadAllButton2"      class="bottomButtons" />
-                <input type="image" src="images/Select All White.png"        id="selectAllButton2"        class="bottomButtons" />
-                <input type="image" src="images/Select None White.png"       id="selectNoneButton2"       class="bottomButtons" />
-                <input type="image" src="images/Invert Selection White.png"  id="invertSelectionButton2"  class="bottomButtons" />
-                <input type="image" src="images/Download Selected White.png" id="downloadSelectedButton2" class="bottomButtons" />
-                <input type="image" src="images/Refresh White.png"           id="refreshButton2"          class="bottomButtons" />
+                <input type="image" src="images/Download All White.png"      id="downloadAllButton2"      class="bottomButtons" title="Download All"      alt="Download All" />
+                <input type="image" src="images/Select All White.png"        id="selectAllButton2"        class="bottomButtons" title="Select All"        alt="Select All" />
+                <input type="image" src="images/Select None White.png"       id="selectNoneButton2"       class="bottomButtons" title="Select None"       alt="Select None" />
+                <input type="image" src="images/Invert Selection White.png"  id="invertSelectionButton2"  class="bottomButtons" title="Invert Selection"  alt="Invert Selection" />
+                <input type="image" src="images/Download Selected White.png" id="downloadSelectedButton2" class="bottomButtons" title="Download Selected" alt="Download Selected" />
+                <input type="image" src="images/Refresh White.png"           id="refreshButton2"          class="bottomButtons" title="Refresh"           alt="Refresh" />
+            </div>
+            <div class="normalButtons">
+                <input type="button" id="downloadAllButton"      value="Download All" />
+                <br />
+                <input type="button" id="selectAllButton"        value="Select All" />
+                <input type="button" id="selectNoneButton"       value="Select None" />
+                <input type="button" id="invertSelectionButton"  value="Invert Selection" />
+                <br />
+                <input type="button" id="downloadSelectedButton" value="Download Selected" />
+                <br />
+                <input type="button" id="refreshButton"          value="Refresh" />
             </div>
         </div>
         <script src="downloadPage.js"></script>

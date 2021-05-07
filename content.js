@@ -3,12 +3,20 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     console.log(`Received message: ${messageText}`);
 
     switch (messageText) {
-        case `getImages`:
+        case `getImageLinks`:
             sendResponse(getImageLinks());
             break;
 
+        case `getCurrentBoard`:
+            sendResponse(getCurrentBoard());
+            break;
+            
         case `getThreadNumber`:
             sendResponse(getThreadNumber());
+            break;
+
+        case `getThreadSubject`:
+            sendResponse(getThreadSubject());
             break;
 
         case `getThreadTitle`:
@@ -31,6 +39,14 @@ function getImageLinks() {
     return imageLinks;
 }
 
+function getCurrentBoard() {
+    var currentUrl = window.location.href;
+    var urlSegments = currentUrl.split(`/`);
+    var currentBoard = urlSegments[3];
+
+    return currentBoard;
+}
+
 function getThreadNumber() {
     var threadNumber = ``;
 
@@ -41,6 +57,16 @@ function getThreadNumber() {
     }
 
     return threadNumber;
+}
+
+function getThreadSubject() {
+    var threadSubject = document.querySelectorAll(`.opContainer`)[0].childNodes[0].childNodes[2].childNodes[3].innerText;
+
+    if (threadSubject == undefined) {
+        threadSubject = document.querySelectorAll(`.opContainer`)[0].childNodes[0].childNodes[2].childNodes[2].innerText;
+    }
+
+    return threadSubject;
 }
 
 function getThreadTitle() {

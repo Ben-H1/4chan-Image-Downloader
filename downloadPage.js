@@ -12,17 +12,22 @@ document.getElementById(`invertSelectionButton2`) .addEventListener(`click`, inv
 document.getElementById(`downloadSelectedButton2`).addEventListener(`click`, downloadSelected);
 document.getElementById(`refreshButton2`)         .addEventListener(`click`, refreshImages);
 
-var imageLinks   = null;
-var tabId        = null;
-var threadNumber = null;
-var threadTitle  = null;
+var imageLinks    = null;
+var tabId         = null;
+var currentBoard  = null;
+var threadNumber  = null;
+var threadSubject = null;
+var threadTitle   = null;
 
+var downloadFolder = `4chan`;
 var imageSize      = 300;
-var viewportWidth  = document.documentElement.clientWidth;
-var imagesPerRow   = Math.floor(viewportWidth / imageSize);
+var viewportWidth;
+var imagesPerRow;
 var checkboxScale  = 2;
 var checkboxMargin = 8 * checkboxScale;
-var objectFit      = `cover`; //fill, contain, cover, scale-down, none
+var objectFit      = `contain`; //fill, contain, cover, scale-down, none
+var useBorder      = true;
+var borderSize     = 2;
 
 chrome.storage.sync.get([`imageLinks`], function(data) {
     imageLinks = data.imageLinks;
@@ -30,17 +35,35 @@ chrome.storage.sync.get([`imageLinks`], function(data) {
     chrome.storage.sync.get([`tabId`], function(data) {
         tabId = data.tabId;
 
-        chrome.storage.sync.get([`threadNumber`], function(data) {
-            threadNumber = data.threadNumber;
-            
-            chrome.storage.sync.get([`threadTitle`], function(data) {
-                threadTitle = removeInvalidCharactersFromThreadTitle(data.threadTitle);
+        chrome.storage.sync.get([`currentBoard`], function(data) {
+            currentBoard = data.currentBoard;
 
-                document.querySelector(`#downloadPathBox`).value += `\\${threadNumber} - ${threadTitle}`;
+            chrome.storage.sync.get([`threadNumber`], function(data) {
+                threadNumber = data.threadNumber;
+                
+                chrome.storage.sync.get([`threadSubject`], function(data) {
+                    threadSubject = removeInvalidCharactersFromThreadText(data.threadSubject);
 
-                chrome.storage.sync.get([`imageSize`], function(data) {
-                    //imageSize = data.imageSize;
-                    createImages();
+                    chrome.storage.sync.get([`threadTitle`], function(data) {
+                        threadTitle = removeInvalidCharactersFromThreadText(data.threadTitle);
+        
+                        //document.querySelector(`#downloadPathBox`).value += `${downloadFolder}\\${currentBoard}\\${threadNumber} - ${threadTitle}`;
+        
+                        document.querySelector(`#downloadPathBox`).value += `${downloadFolder}\\`;
+                        document.querySelector(`#downloadPathBox`).value += `${currentBoard}\\`;
+                        document.querySelector(`#downloadPathBox`).value += `${threadNumber}`;
+                        if (threadSubject != `` && threadSubject != null && threadSubject != undefined) {
+                            document.querySelector(`#downloadPathBox`).value += ` - ${threadSubject}`;
+                        }
+                        if (threadTitle != `` && threadTitle != null && threadTitle != undefined) {
+                            document.querySelector(`#downloadPathBox`).value += ` - ${threadTitle}`;
+                        }
+
+                        chrome.storage.sync.get([`imageSize`], function(data) {
+                            //imageSize = data.imageSize;
+                            createImages();
+                        });
+                    });
                 });
             });
         });
@@ -48,6 +71,9 @@ chrome.storage.sync.get([`imageLinks`], function(data) {
 });
 
 function createImages() {
+    viewportWidth = document.documentElement.clientWidth;
+    imagesPerRow  = Math.floor(viewportWidth / imageSize);
+
     for (var i = 0; i < imageLinks.length; i += imagesPerRow) {
         var table    = document.getElementById(`imageTable`);
         var tableRow = document.createElement(`tr`);
@@ -64,6 +90,7 @@ function createImages() {
                     subElement          = document.createElement(`video`);
                     subElement.autoplay = true;
                     subElement.loop     = true;
+                    subElement.muted    = true;
         
                     var source  = document.createElement(`source`);
                     source.src  = currentImageLink;
@@ -71,20 +98,21 @@ function createImages() {
         
                     subElement.appendChild(source);
                     subElement.load();
-    
-                    subElement.width  = `${imageSize}`;
-                    subElement.height = `${imageSize}`;
-                    subElement.style.objectFit = objectFit;
                 } else {
-                    subElement        = document.createElement(`img`);
-                    subElement.src    = currentImageLink;
-                    subElement.width  = `${imageSize}`;
-                    subElement.height = `${imageSize}`;
-                    subElement.style.objectFit = objectFit;
+                    subElement     = document.createElement(`img`);
+                    subElement.src = currentImageLink;
+                }
+
+                subElement.width           = `${imageSize}`;
+                subElement.height          = `${imageSize}`;
+                subElement.style.objectFit = objectFit;
+
+                if (useBorder) {
+                    subElement.style.border = `${borderSize}px solid white`;
                 }
 
                 subElement.style.zIndex = `1`;
-                subElement.ondragstart = function() {return false;}
+                subElement.ondragstart  = function() {return false;}
                 element.className = `image`;
 
                 var checkbox = document.createElement(`input`);
@@ -182,17 +210,21 @@ function refreshImages() {
     });
 }
 
-function removeInvalidCharactersFromThreadTitle(threadTitle) {
-    var newThreadTitle = ``;
-    var invalidChars   = [`\\`, `/`, `:`, `*`, `?`, `"`, `<`, `>`, `|`];
+function removeInvalidCharactersFromThreadText(threadText) {
+    var newThreadText = ``;
+    var invalidChars   = [`\n`, `\\`, `/`, `:`, `*`, `?`, `"`, `<`, `>`, `|`, `.`, `~`];
 
-    for (var i = 0; i < threadTitle.length; i++) {
-        var currentChar = threadTitle.charAt(i);
+    for (var i = 0; i < threadText.length; i++) {
+        var currentChar = threadText.charAt(i);
 
         if (! invalidChars.includes(currentChar)) {
-                newThreadTitle += currentChar;
+            newThreadText += currentChar;
+        } else {
+            if (i != threadText.length - 1) {
+                newThreadText += ` `;
+            }
         }
     }
 
-    return newThreadTitle;
+    return newThreadText;
 }

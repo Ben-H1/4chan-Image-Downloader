@@ -1,6 +1,6 @@
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     var messageText = msg.text;
-    console.log(`Received message: ${messageText}`);
+    console.log(`4chan Image Downloader: Received message: ${messageText}`);
 
     switch (messageText) {
         case `getImageLinks`:
@@ -24,7 +24,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             break;
 
         default:
-            console.log(`Unknown message`);
+            console.log(`4chan Image Downloader: Unknown message`);
             break;
     }
 });
@@ -48,29 +48,19 @@ function getCurrentBoard() {
 }
 
 function getThreadNumber() {
-    var threadNumber = ``;
-
-    try {
-        threadNumber = document.querySelectorAll(`.opContainer`)[0].childNodes[0].childNodes[2].childNodes[9].childNodes[1].innerText;
-    } catch (e) {
-        threadNumber = document.querySelectorAll(`.opContainer`)[0].childNodes[0].childNodes[2].childNodes[8].childNodes[1].innerText;
-    }
+    var threadNumber = document.querySelectorAll(`.opContainer`)[0].querySelectorAll(`.postInfo`)[0].querySelectorAll(`.postNum`)[0].childNodes[1].innerText;
 
     return threadNumber;
 }
 
-function getThreadSubject() {
-    var threadSubject = document.querySelectorAll(`.opContainer`)[0].childNodes[0].childNodes[2].childNodes[3].innerText;
-
-    if (threadSubject == undefined) {
-        threadSubject = document.querySelectorAll(`.opContainer`)[0].childNodes[0].childNodes[2].childNodes[2].innerText;
-    }
+function getThreadSubject() {    
+    var threadSubject = document.querySelectorAll(`.opContainer`)[0].querySelectorAll(`.postInfo`)[0].querySelectorAll(`.subject`)[0].innerText;
 
     return threadSubject;
 }
 
 function getThreadTitle() {
-    var threadTitle = document.querySelectorAll(`.opContainer`)[0].childNodes[0].childNodes[3].innerText;
+    var threadTitle = document.querySelectorAll(`.opContainer`)[0].querySelectorAll(`.postMessage`)[0].innerText;
 
     return threadTitle;
 }

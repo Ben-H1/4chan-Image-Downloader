@@ -1,16 +1,58 @@
-document.getElementById(`downloadAllButton`)     .addEventListener(`click`, downloadAll);
-document.getElementById(`selectAllButton`)       .addEventListener(`click`, selectAll);
-document.getElementById(`selectNoneButton`)      .addEventListener(`click`, selectNone);
-document.getElementById(`invertSelectionButton`) .addEventListener(`click`, invertSelection);
-document.getElementById(`downloadSelectedButton`).addEventListener(`click`, downloadSelected);
-document.getElementById(`refreshButton`)         .addEventListener(`click`, refreshImages);
+var downloadAllButton      = document.querySelector(`#downloadAllButton`);
+var selectAllButton        = document.querySelector(`#selectAllButton`);
+var selectNoneButton       = document.querySelector(`#selectNoneButton`);
+var invertSelectionButton  = document.querySelector(`#invertSelectionButton`);
+var downloadSelectedButton = document.querySelector(`#downloadSelectedButton`);
+var refreshButton          = document.querySelector(`#refreshButton`);
+var scrollToBottomButton   = document.querySelector(`#scrollToBottomButton`);
 
-document.getElementById(`downloadAllButton2`)     .addEventListener(`click`, downloadAll);
-document.getElementById(`selectAllButton2`)       .addEventListener(`click`, selectAll);
-document.getElementById(`selectNoneButton2`)      .addEventListener(`click`, selectNone);
-document.getElementById(`invertSelectionButton2`) .addEventListener(`click`, invertSelection);
-document.getElementById(`downloadSelectedButton2`).addEventListener(`click`, downloadSelected);
-document.getElementById(`refreshButton2`)         .addEventListener(`click`, refreshImages);
+var downloadAllButton2      = document.querySelector(`#downloadAllButton2`);
+var selectAllButton2        = document.querySelector(`#selectAllButton2`);
+var selectNoneButton2       = document.querySelector(`#selectNoneButton2`);
+var invertSelectionButton2  = document.querySelector(`#invertSelectionButton2`);
+var downloadSelectedButton2 = document.querySelector(`#downloadSelectedButton2`);
+var refreshButton2          = document.querySelector(`#refreshButton2`);
+var scrollToTopButton       = document.querySelector(`#scrollToTopButton`);
+
+var imageSizeSlider     = document.querySelector(`#imageSizeSlider`);
+var imageSizeBox        = document.querySelector(`#imageSizeBox`);
+
+var checkboxScaleSlider = document.querySelector(`#checkboxScaleSlider`);
+var checkboxScaleBox    = document.querySelector(`#checkboxScaleBox`);
+
+var imageFitDropdown    = document.querySelector(`#imageFitDropdown`);
+
+// top buttons
+downloadAllButton     .addEventListener(`click`, downloadAll);
+selectAllButton       .addEventListener(`click`, selectAll);
+selectNoneButton      .addEventListener(`click`, selectNone);
+invertSelectionButton .addEventListener(`click`, invertSelection);
+downloadSelectedButton.addEventListener(`click`, downloadSelected);
+refreshButton         .addEventListener(`click`, () => {refreshImages(false)});
+scrollToBottomButton  .addEventListener(`click`, scrollToBottom);
+
+// bottom buttons
+downloadAllButton2     .addEventListener(`click`, downloadAll);
+selectAllButton2       .addEventListener(`click`, selectAll);
+selectNoneButton2      .addEventListener(`click`, selectNone);
+invertSelectionButton2 .addEventListener(`click`, invertSelection);
+downloadSelectedButton2.addEventListener(`click`, downloadSelected);
+refreshButton2         .addEventListener(`click`, () => {refreshImages(true)});
+scrollToTopButton      .addEventListener(`click`, scrollToTop);
+
+// image size
+imageSizeSlider.addEventListener(`input`, updateImageSizeValue);
+imageSizeSlider.addEventListener(`change`, recreateImageGrid);
+
+// checkbox scale
+checkboxScaleSlider.addEventListener(`input`, updateCheckboxScaleValue);
+checkboxScaleSlider.addEventListener(`change`, recreateImageGrid);
+
+// image fit
+imageFitDropdown.addEventListener(`change`, () => {recreateImageGrid(); updateImageFitValue();});
+
+// viewport
+window.addEventListener('resize', checkViewport);
 
 var imageLinks    = null;
 var tabId         = null;
@@ -19,63 +61,135 @@ var threadNumber  = null;
 var threadSubject = null;
 var threadTitle   = null;
 
-var downloadFolder = `4chan`;
-var imageSize      = 300;
-var viewportWidth;
-var imagesPerRow;
-var checkboxScale  = 2;
-var checkboxMargin = 8 * checkboxScale;
-var objectFit      = `contain`; //fill, contain, cover, scale-down, none
+var viewportWidth  = window.innerWidth;
+
+var downloadFolder = null;
+var imageSize      = null;
+var viewportWidth  = null;
+var imagesPerRow   = null;
+var checkboxScale  = null;
+var checkboxMargin = null;
+var objectFit      = null;
 var useBorder      = true;
 var borderSize     = 2;
 
-chrome.storage.sync.get([`imageLinks`], function(data) {
-    imageLinks = data.imageLinks;
+var autoplayVideos = true;
+var loopVideos     = true;
+var muteVideos     = true;
+var videoControls  = false;
 
-    chrome.storage.sync.get([`tabId`], function(data) {
-        tabId = data.tabId;
+initialiseValues();
 
-        chrome.storage.sync.get([`currentBoard`], function(data) {
-            currentBoard = data.currentBoard;
+function initialiseValues() {
+    chrome.storage.sync.get([`imageLinks`], function(data) {
+        imageLinks = data.imageLinks;
+    
+        chrome.storage.sync.get([`tabId`], function(data) {
+            tabId = data.tabId;
+    
+            chrome.storage.sync.get([`currentBoard`], function(data) {
+                currentBoard = data.currentBoard;
+    
+                chrome.storage.sync.get([`threadNumber`], function(data) {
+                    threadNumber = data.threadNumber;
+                    
+                    chrome.storage.sync.get([`threadSubject`], function(data) {
+                        threadSubject = removeInvalidCharactersFromThreadText(data.threadSubject);
+    
+                        chrome.storage.sync.get([`threadTitle`], function(data) {
+                            threadTitle = removeInvalidCharactersFromThreadText(data.threadTitle);
+                    
+                            chrome.storage.sync.get([`defaultDownloadFolder`], function(data) { //IMPLEMENT
+                                if (isEmpty(data.defaultDownloadFolder)) {
+                                    downloadFolder = `4chan`;
+                                } else {
+                                    downloadFolder = data.defaultDownloadFolder;
+                                }
 
-            chrome.storage.sync.get([`threadNumber`], function(data) {
-                threadNumber = data.threadNumber;
-                
-                chrome.storage.sync.get([`threadSubject`], function(data) {
-                    threadSubject = removeInvalidCharactersFromThreadText(data.threadSubject);
+                                document.querySelector(`#downloadPathBox`).value += `${downloadFolder}\\`;
+                                document.querySelector(`#downloadPathBox`).value += `${currentBoard}\\`;
+                                document.querySelector(`#downloadPathBox`).value += `${threadNumber}`;
+                                if (threadSubject != `` && threadSubject != null && threadSubject != undefined) {
+                                    document.querySelector(`#downloadPathBox`).value += ` - ${threadSubject}`;
+                                }
+                                if (threadTitle != `` && threadTitle != null && threadTitle != undefined) {
+                                    document.querySelector(`#downloadPathBox`).value += ` - ${threadTitle}`;
+                                }
+    
+                                chrome.storage.sync.get([`defaultImageSize`], function(data) { //IMPLEMENT
+                                    if (isEmpty(data.defaultImageSize)) {
+                                        imageSize = 300;
+                                    } else {
+                                        imageSize = data.defaultImageSize;
+                                    }
 
-                    chrome.storage.sync.get([`threadTitle`], function(data) {
-                        threadTitle = removeInvalidCharactersFromThreadText(data.threadTitle);
-        
-                        //document.querySelector(`#downloadPathBox`).value += `${downloadFolder}\\${currentBoard}\\${threadNumber} - ${threadTitle}`;
-        
-                        document.querySelector(`#downloadPathBox`).value += `${downloadFolder}\\`;
-                        document.querySelector(`#downloadPathBox`).value += `${currentBoard}\\`;
-                        document.querySelector(`#downloadPathBox`).value += `${threadNumber}`;
-                        if (threadSubject != `` && threadSubject != null && threadSubject != undefined) {
-                            document.querySelector(`#downloadPathBox`).value += ` - ${threadSubject}`;
-                        }
-                        if (threadTitle != `` && threadTitle != null && threadTitle != undefined) {
-                            document.querySelector(`#downloadPathBox`).value += ` - ${threadTitle}`;
-                        }
+                                    imageSizeSlider.value  = imageSize;
+                                    imageSizeBox.innerText = imageSize;
 
-                        chrome.storage.sync.get([`imageSize`], function(data) {
-                            //imageSize = data.imageSize;
-                            createImages();
-                        });
-                    });
-                });
-            });
-        });
-    });
-});
+                                    chrome.storage.sync.get([`defaultCheckboxScale`], function(data) { //IMPLEMENT
+                                        if (isEmpty(data.defaultCheckboxScale)) {
+                                            checkboxScale = 2;
+                                        } else {
+                                            checkboxScale = data.defaultCheckboxScale;
+                                        }
+
+                                        checkboxScaleSlider.value  = checkboxScale;
+                                        checkboxScaleBox.innerText = checkboxScale;
+
+                                        chrome.storage.sync.get([`defaultImageFit`], function(data) { //IMPLEMENT
+                                            if (isEmpty(data.defaultImageFit)) {
+                                                objectFit = `contain`; //fill, contain, cover, scale-down, none
+                                            } else {
+                                                objectFit = data.defaultImageFit;
+                                            }
+
+                                            imageFitDropdown.value = objectFit;
+
+                                            chrome.storage.sync.get([`defaultBorderSize`], function(data) { //IMPLEMENT
+                                                if (isEmpty(data.defaultBorderSize)) {
+                                                    borderSize = 2;
+                                                } else {
+                                                    borderSize = data.defaultBorderSize;
+                                                }
+
+                                                createImages();
+    });});});});});});});});});});});
+}
+
+function updateImageSizeValue() {
+    imageSize = imageSizeSlider.value;
+    imageSizeBox.innerText = imageSize;
+
+    chrome.storage.sync.set({defaultImageSize: imageSize});
+}
+
+function updateCheckboxScaleValue() {
+    checkboxScale = checkboxScaleSlider.value;
+    checkboxScaleBox.innerText = checkboxScale;
+
+    chrome.storage.sync.set({defaultCheckboxScale: checkboxScale});
+}
+
+function updateImageFitValue() {
+    chrome.storage.sync.set({defaultImageFit: objectFit});
+}
+
+function checkViewport() {
+    if (window.innerWidth != viewportWidth) {
+        recreateImageGrid();
+    }
+
+    viewportWidth = window.innerWidth;
+}
 
 function createImages() {
-    viewportWidth = document.documentElement.clientWidth;
-    imagesPerRow  = Math.floor(viewportWidth / imageSize);
+    viewportWidth  = document.documentElement.clientWidth;
+    imagesPerRow   = Math.floor(viewportWidth / imageSize);
+    checkboxMargin = 8 * checkboxScale;
+    objectFit      = imageFitDropdown.value;
 
     for (var i = 0; i < imageLinks.length; i += imagesPerRow) {
-        var table    = document.getElementById(`imageTable`);
+        var table    = document.querySelector(`#imageTable`);
         var tableRow = document.createElement(`tr`);
         
         for (var j = i; j < i + imagesPerRow; j++) {
@@ -88,9 +202,10 @@ function createImages() {
     
                 if (currentImageLink.includes(`webm`)) {
                     subElement          = document.createElement(`video`);
-                    subElement.autoplay = true;
-                    subElement.loop     = true;
-                    subElement.muted    = true;
+                    subElement.autoplay = autoplayVideos;
+                    subElement.loop     = loopVideos;
+                    subElement.muted    = muteVideos;
+                    subElement.controls = videoControls;
         
                     var source  = document.createElement(`source`);
                     source.src  = currentImageLink;
@@ -190,24 +305,42 @@ function downloadFile(file) {
         path += `\\`;
     }
     path += fileName;
-    console.log(path);
+    console.log(`Downloading: ${fileName}`);
 
-    chrome.downloads.download({url: file, filename: path});
+    chrome.downloads.download({url: file, filename: path}, (result) => {
+        console.log(`${fileName} downloaded!`);
+    });
 }
 
-function refreshImages() {
+function recreateImageGrid() {
+    var table = document.querySelector(`#imageTable`);
+    table.innerHTML = ``;
+
+    createImages();
+}
+
+function refreshImages(scrollToBottomFlag) {
     chrome.tabs.getSelected(null, function(tab) {
-        chrome.tabs.sendMessage(tabId, {text: 'getImages'}, (result) => {
+        chrome.tabs.sendMessage(tabId, {text: 'getImageLinks'}, (result) => {
             imageLinks = result;
 
-            chrome.storage.sync.set({imageLinks: imageLinks});
+            chrome.storage.sync.set({imageLinks: imageLinks}, () => {
+                recreateImageGrid();
 
-            var table = document.querySelector(`#imageTable`);
-            table.innerHTML = ``;
-
-            createImages();
+                if (scrollToBottomFlag) {
+                    scrollToBottom();
+                }
+            });
         });
     });
+}
+
+function scrollToBottom() {
+    window.scrollTo(0,document.documentElement.scrollHeight);
+}
+
+function scrollToTop() {
+    document.documentElement.scrollTop = 0;
 }
 
 function removeInvalidCharactersFromThreadText(threadText) {
@@ -227,4 +360,12 @@ function removeInvalidCharactersFromThreadText(threadText) {
     }
 
     return newThreadText;
+}
+
+function isEmpty(variable) {
+    if (variable == `` || variable == null || variable == undefined || typeof variable == undefined) {
+        return true;
+    }
+
+    return false;
 }

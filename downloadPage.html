@@ -27,16 +27,21 @@
             #topButtons {
                 display: none;
             }
+            .imageButtons {
+                display: block;
+                float: left;
+            }
             .normalButtons {
                 display: none;
+                float: left;
             }
-            #downloadPathBlock {
+            #optionsBlock {
                 float: right;
             }
             span {
                 color: white;
                 vertical-align: top;
-                font-size: 20px;
+                font-size: 16px;
             }
         </style>
         <title>4chan Image Downloader</title>
@@ -50,11 +55,39 @@
                 <input type="image" src="images/Invert Selection White.png"  id="invertSelectionButton"  class="topButtons" title="Invert Selection"  alt="Invert Selection" />
                 <input type="image" src="images/Download Selected White.png" id="downloadSelectedButton" class="topButtons" title="Download Selected" alt="Download Selected" />
                 <input type="image" src="images/Refresh White.png"           id="refreshButton"          class="topButtons" title="Refresh"           alt="Refresh" />
-                <span id="downloadPathBlock">
+                <input type="image" src="images/Scroll to Bottom White.png"  id="scrollToBottomButton"   class="topButtons" title="Scroll to Bottom"  alt="Scroll to Bottom" />
+            </div>
+
+            <div id="optionsBlock">
+                <div id="downloadPathBlock">
                     <span>Download path: Downloads\</span>
                     <input type="text" id="downloadPathBox" />
-                </span>
+                </div>
+
+                <div id="imageSizeBlock">
+                    <span>Image size:</span>
+                    <input type="range" min="50" max="600" step="50" id="imageSizeSlider" />
+                    <span id="imageSizeBox"></span>
+                </div>
+
+                <div id="checkboxScaleBlock">
+                    <span>Checkbox scale:</span>
+                    <input type="range" min="1" max="3" step="0.25" id="checkboxScaleSlider" />
+                    <span id="checkboxScaleBox"></span>
+                </div>
+
+                <div id="imageFitBlock">
+                    <span>Image fit:</span>
+                    <select id="imageFitDropdown">
+                        <option value="fill"      >Fill</option>
+                        <option value="contain"   >Contain</option>
+                        <option value="cover"     >Cover</option>
+                        <option value="scale-down">Scale down</option>
+                        <option value="none"      >None</option>
+                    </select>
+                </div>
             </div>
+
             <div class="normalButtons">
                 <input type="button" id="downloadAllButton"      value="Download All" />
                 <br />
@@ -65,6 +98,8 @@
                 <input type="button" id="downloadSelectedButton" value="Download Selected" />
                 <br />
                 <input type="button" id="refreshButton"          value="Refresh" />
+                <br />
+                <input type="button" id="scrollToBottomButton"   value="Scroll to Bottom" />
             </div>
         </div>
         <br />
@@ -81,7 +116,9 @@
                 <input type="image" src="images/Invert Selection White.png"  id="invertSelectionButton2"  class="bottomButtons" title="Invert Selection"  alt="Invert Selection" />
                 <input type="image" src="images/Download Selected White.png" id="downloadSelectedButton2" class="bottomButtons" title="Download Selected" alt="Download Selected" />
                 <input type="image" src="images/Refresh White.png"           id="refreshButton2"          class="bottomButtons" title="Refresh"           alt="Refresh" />
+                <input type="image" src="images/Scroll to Top White.png"     id="scrollToTopButton"       class="bottomButtons" title="Scroll to Top"     alt="Scroll to Top" />
             </div>
+
             <div class="normalButtons">
                 <input type="button" id="downloadAllButton"      value="Download All" />
                 <br />
@@ -92,6 +129,8 @@
                 <input type="button" id="downloadSelectedButton" value="Download Selected" />
                 <br />
                 <input type="button" id="refreshButton"          value="Refresh" />
+                <br />
+                <input type="button" id="scrollToTopButton"   value="Scroll to Top" />
             </div>
         </div>
         <script src="downloadPage.js"></script>

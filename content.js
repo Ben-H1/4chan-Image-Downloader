@@ -33,7 +33,11 @@ function getImageLinks() {
     var imageLinks = [];
 
     document.querySelectorAll(`.fileThumb`).forEach((element) => {
-        imageLinks.push(element.href);
+        var parent = element.parentNode.parentNode.parentNode.parentNode;
+
+        if (parent.className != `inline`) {
+            imageLinks.push(element.href);
+        }
     });
 
     return imageLinks;

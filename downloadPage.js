@@ -14,13 +14,24 @@ var downloadSelectedButton2 = document.querySelector(`#downloadSelectedButton2`)
 var refreshButton2          = document.querySelector(`#refreshButton2`);
 var scrollToTopButton       = document.querySelector(`#scrollToTopButton`);
 
-var imageSizeSlider     = document.querySelector(`#imageSizeSlider`);
-var imageSizeBox        = document.querySelector(`#imageSizeBox`);
+var collapsible = document.querySelector(`#collapsible`);
+var hiddenOptionsContent = document.querySelector(`#hiddenOptionsContent`);
+
+var imageSizeSlider = document.querySelector(`#imageSizeSlider`);
+var imageSizeBox    = document.querySelector(`#imageSizeBox`);
 
 var checkboxScaleSlider = document.querySelector(`#checkboxScaleSlider`);
 var checkboxScaleBox    = document.querySelector(`#checkboxScaleBox`);
 
-var imageFitDropdown    = document.querySelector(`#imageFitDropdown`);
+var borderSizeSlider = document.querySelector(`#borderSizeSlider`);
+var borderSizeBox    = document.querySelector(`#borderSizeBox`);
+
+var imageFitDropdown = document.querySelector(`#imageFitDropdown`);
+
+var autoplayVideosCheckbox = document.querySelector(`#autoplayVideosCheckbox`);
+var loopVideosCheckbox     = document.querySelector(`#loopVideosCheckbox`);
+var playVideoSoundCheckbox = document.querySelector(`#playVideoSoundCheckbox`);
+var videoControlsCheckbox  = document.querySelector(`#videoControlsCheckbox`);
 
 // top buttons
 downloadAllButton     .addEventListener(`click`, downloadAll);
@@ -40,6 +51,17 @@ downloadSelectedButton2.addEventListener(`click`, downloadSelected);
 refreshButton2         .addEventListener(`click`, () => {refreshImages(true)});
 scrollToTopButton      .addEventListener(`click`, scrollToTop);
 
+// collapsible options
+collapsible.addEventListener(`click`, () => {
+    if (hiddenOptionsContent.style.display == `block`) {
+        hiddenOptionsContent.style.display = `none`;
+        collapsible.value = `\u25ba Options`;
+    } else {
+        hiddenOptionsContent.style.display = `block`;
+        collapsible.value = `\u25bc Options`;
+    }
+});
+
 // image size
 imageSizeSlider.addEventListener(`input`, updateImageSizeValue);
 imageSizeSlider.addEventListener(`change`, recreateImageGrid);
@@ -48,8 +70,18 @@ imageSizeSlider.addEventListener(`change`, recreateImageGrid);
 checkboxScaleSlider.addEventListener(`input`, updateCheckboxScaleValue);
 checkboxScaleSlider.addEventListener(`change`, recreateImageGrid);
 
+// border size
+borderSizeSlider.addEventListener(`input`, updateBorderSizeValue);
+borderSizeSlider.addEventListener(`change`, recreateImageGrid);
+
 // image fit
 imageFitDropdown.addEventListener(`change`, () => {recreateImageGrid(); updateImageFitValue();});
+
+// video controls
+autoplayVideosCheckbox.addEventListener(`change`, () => {recreateImageGrid(); updateAutoplayVideosValue();});
+loopVideosCheckbox.addEventListener(`change`, () => {recreateImageGrid(); updateLoopVideosValue();});
+playVideoSoundCheckbox.addEventListener(`change`, () => {recreateImageGrid(); updatePlayVideoSoundValue();});
+videoControlsCheckbox.addEventListener(`change`, () => {recreateImageGrid(); updateVideoControlsValue();});
 
 // viewport
 window.addEventListener('resize', checkViewport);
@@ -73,10 +105,10 @@ var objectFit      = null;
 var useBorder      = true;
 var borderSize     = 2;
 
-var autoplayVideos = true;
-var loopVideos     = true;
-var muteVideos     = true;
-var videoControls  = false;
+var autoplayVideos = null;
+var loopVideos     = null;
+var playVideoSound = null;
+var videoControls  = null;
 
 initialiseValues();
 
@@ -116,7 +148,7 @@ function initialiseValues() {
                                     document.querySelector(`#downloadPathBox`).value += ` - ${threadTitle}`;
                                 }
     
-                                chrome.storage.sync.get([`defaultImageSize`], function(data) { //IMPLEMENT
+                                chrome.storage.sync.get([`defaultImageSize`], function(data) {
                                     if (isEmpty(data.defaultImageSize)) {
                                         imageSize = 300;
                                     } else {
@@ -126,7 +158,7 @@ function initialiseValues() {
                                     imageSizeSlider.value  = imageSize;
                                     imageSizeBox.innerText = imageSize;
 
-                                    chrome.storage.sync.get([`defaultCheckboxScale`], function(data) { //IMPLEMENT
+                                    chrome.storage.sync.get([`defaultCheckboxScale`], function(data) {
                                         if (isEmpty(data.defaultCheckboxScale)) {
                                             checkboxScale = 2;
                                         } else {
@@ -136,24 +168,63 @@ function initialiseValues() {
                                         checkboxScaleSlider.value  = checkboxScale;
                                         checkboxScaleBox.innerText = checkboxScale;
 
-                                        chrome.storage.sync.get([`defaultImageFit`], function(data) { //IMPLEMENT
-                                            if (isEmpty(data.defaultImageFit)) {
-                                                objectFit = `contain`; //fill, contain, cover, scale-down, none
+                                        chrome.storage.sync.get([`defaultBorderSize`], function(data) {
+                                            if (isEmpty(data.defaultBorderSize)) {
+                                                borderSize = 2;
                                             } else {
-                                                objectFit = data.defaultImageFit;
+                                                borderSize = data.defaultBorderSize;
                                             }
 
-                                            imageFitDropdown.value = objectFit;
+                                            borderSizeSlider.value  = borderSize;
+                                            borderSizeBox.innerText = borderSize;
 
-                                            chrome.storage.sync.get([`defaultBorderSize`], function(data) { //IMPLEMENT
-                                                if (isEmpty(data.defaultBorderSize)) {
-                                                    borderSize = 2;
+                                            chrome.storage.sync.get([`defaultImageFit`], function(data) {
+                                                if (isEmpty(data.defaultImageFit)) {
+                                                    objectFit = `contain`; //fill, contain, cover, scale-down, none
                                                 } else {
-                                                    borderSize = data.defaultBorderSize;
+                                                    objectFit = data.defaultImageFit;
                                                 }
 
-                                                createImages();
-    });});});});});});});});});});});
+                                                imageFitDropdown.value = objectFit;
+
+                                                chrome.storage.sync.get([`defaultAutoplayVideos`], function(data) {
+                                                    if (isEmpty(data.defaultAutoplayVideos)) {
+                                                        autoplayVideos = true;
+                                                    } else {
+                                                        autoplayVideos = data.defaultAutoplayVideos;
+                                                    }
+
+                                                    autoplayVideosCheckbox.checked = autoplayVideos;
+
+                                                    chrome.storage.sync.get([`defaultLoopVideos`], function(data) {
+                                                        if (isEmpty(data.defaultLoopVideos)) {
+                                                            loopVideos = true;
+                                                        } else {
+                                                            loopVideos = data.defaultLoopVideos;
+                                                        }
+   
+                                                       loopVideosCheckbox.checked = loopVideos;
+
+                                                        chrome.storage.sync.get([`defaultPlayVideoSound`], function(data) {
+                                                            if (isEmpty(data.defaultPlayVideoSound)) {
+                                                                playVideoSound = false;
+                                                            } else {
+                                                                playVideoSound = data.defaultPlayVideoSound;
+                                                            }
+       
+                                                           playVideoSoundCheckbox.checked = playVideoSound;
+
+                                                            chrome.storage.sync.get([`defaultVideoControls`], function(data) {
+                                                                if (isEmpty(data.defaultVideoControls)) {
+                                                                    videoControls = false;
+                                                                } else {
+                                                                    videoControls = data.defaultVideoControls;
+                                                                }
+
+                                                                videoControlsCheckbox.checked = videoControls;
+
+                                                                createImages();
+    });});});});});});});});});});});});});});});
 }
 
 function updateImageSizeValue() {
@@ -170,8 +241,39 @@ function updateCheckboxScaleValue() {
     chrome.storage.sync.set({defaultCheckboxScale: checkboxScale});
 }
 
+function updateBorderSizeValue() {
+    borderSize = borderSizeSlider.value;
+    borderSizeBox.innerText = borderSize;
+
+    chrome.storage.sync.set({defaultBorderSize: borderSize});
+}
+
 function updateImageFitValue() {
     chrome.storage.sync.set({defaultImageFit: objectFit});
+}
+
+function updateAutoplayVideosValue() {
+    autoplayVideos = autoplayVideosCheckbox.checked;
+
+    chrome.storage.sync.set({defaultAutoplayVideos: autoplayVideos});
+}
+
+function updateLoopVideosValue() {
+    loopVideos = loopVideosCheckbox.checked;
+
+    chrome.storage.sync.set({defaultLoopVideos: loopVideos});
+}
+
+function updatePlayVideoSoundValue() {
+    playVideoSound = playVideoSoundCheckbox.checked;
+
+    chrome.storage.sync.set({defaultPlayVideoSound: playVideoSound});
+}
+
+function updateVideoControlsValue() {
+    videoControls = videoControlsCheckbox.checked;
+
+    chrome.storage.sync.set({defaultVideoControls: videoControls});
 }
 
 function checkViewport() {
@@ -187,6 +289,11 @@ function createImages() {
     imagesPerRow   = Math.floor(viewportWidth / imageSize);
     checkboxMargin = 8 * checkboxScale;
     objectFit      = imageFitDropdown.value;
+
+    autoplayVideos = autoplayVideosCheckbox.checked;
+    loopVideos = loopVideosCheckbox.checked;
+    playVideoSound = playVideoSoundCheckbox.checked;
+    videoControls = videoControlsCheckbox.checked;
 
     for (var i = 0; i < imageLinks.length; i += imagesPerRow) {
         var table    = document.querySelector(`#imageTable`);
@@ -204,7 +311,7 @@ function createImages() {
                     subElement          = document.createElement(`video`);
                     subElement.autoplay = autoplayVideos;
                     subElement.loop     = loopVideos;
-                    subElement.muted    = muteVideos;
+                    subElement.muted    = ! playVideoSound;
                     subElement.controls = videoControls;
         
                     var source  = document.createElement(`source`);
@@ -322,15 +429,23 @@ function recreateImageGrid() {
 function refreshImages(scrollToBottomFlag) {
     chrome.tabs.getSelected(null, function(tab) {
         chrome.tabs.sendMessage(tabId, {text: 'getImageLinks'}, (result) => {
-            imageLinks = result;
+            var newImageLinks = result;
 
-            chrome.storage.sync.set({imageLinks: imageLinks}, () => {
-                recreateImageGrid();
+            if (chrome.runtime.lastError) {
+                console.log(`Unable to retrieve images`);
+            }
 
-                if (scrollToBottomFlag) {
-                    scrollToBottom();
-                }
-            });
+            if (newImageLinks != null) {
+                imageLinks = newImageLinks;
+
+                chrome.storage.sync.set({imageLinks: imageLinks}, () => {
+                    recreateImageGrid();
+    
+                    if (scrollToBottomFlag) {
+                        scrollToBottom();
+                    }
+                });
+            }
         });
     });
 }
@@ -363,7 +478,7 @@ function removeInvalidCharactersFromThreadText(threadText) {
 }
 
 function isEmpty(variable) {
-    if (variable == `` || variable == null || variable == undefined || typeof variable == undefined) {
+    if ((variable == `` || variable == null || variable == undefined || typeof variable == undefined) && variable != true && variable != false) {
         return true;
     }
 

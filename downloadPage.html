@@ -35,8 +35,14 @@
                 display: none;
                 float: left;
             }
-            #optionsBlock {
+            #optionsBlock, #optionsBlock2, #collapsible {
                 float: right;
+            }
+            #collapsible {
+                margin-left: 152px;
+            }
+            #hiddenOptionsContent {
+                display: none;
             }
             span {
                 color: white;
@@ -64,27 +70,59 @@
                     <input type="text" id="downloadPathBox" />
                 </div>
 
-                <div id="imageSizeBlock">
-                    <span>Image size:</span>
-                    <input type="range" min="50" max="600" step="50" id="imageSizeSlider" />
-                    <span id="imageSizeBox"></span>
-                </div>
-
-                <div id="checkboxScaleBlock">
-                    <span>Checkbox scale:</span>
-                    <input type="range" min="1" max="3" step="0.25" id="checkboxScaleSlider" />
-                    <span id="checkboxScaleBox"></span>
-                </div>
-
-                <div id="imageFitBlock">
-                    <span>Image fit:</span>
-                    <select id="imageFitDropdown">
-                        <option value="fill"      >Fill</option>
-                        <option value="contain"   >Contain</option>
-                        <option value="cover"     >Cover</option>
-                        <option value="scale-down">Scale down</option>
-                        <option value="none"      >None</option>
-                    </select>
+                <div id="optionsBlock2">
+                    <input type="button" id="collapsible" value="&#x25ba Options" />
+                    
+                    <div id="hiddenOptionsContent">
+                        <div id="imageSizeBlock">
+                            <span>Image size:</span>
+                            <input type="range" min="50" max="600" step="50" id="imageSizeSlider" />
+                            <span id="imageSizeBox"></span>
+                        </div>
+        
+                        <div id="checkboxScaleBlock">
+                            <span>Checkbox scale:</span>
+                            <input type="range" min="1" max="3" step="0.25" id="checkboxScaleSlider" />
+                            <span id="checkboxScaleBox"></span>
+                        </div>
+        
+                        <div id="borderSizeBlock">
+                            <span>Border size:</span>
+                            <input type="range" min="0" max="5" step="1" id="borderSizeSlider" />
+                            <span id="borderSizeBox"></span>
+                        </div>
+        
+                        <div id="imageFitBlock">
+                            <span>Image fit:</span>
+                            <select id="imageFitDropdown">
+                                <option value="fill"      >Fill</option>
+                                <option value="contain"   >Contain</option>
+                                <option value="cover"     >Cover</option>
+                                <option value="scale-down">Scale down</option>
+                                <option value="none"      >None</option>
+                            </select>
+                        </div>
+    
+                        <div id="autoplayVideosBlock">
+                            <span>Autoplay videos:</span>
+                            <input type="checkbox" id="autoplayVideosCheckbox" />
+                        </div>
+        
+                        <div id="loopVideosBlock">
+                            <span>Loop videos:</span>
+                            <input type="checkbox" id="loopVideosCheckbox" />
+                        </div>
+        
+                        <div id="playVideoSoundBlock">
+                            <span>Play video sound:</span>
+                            <input type="checkbox" id="playVideoSoundCheckbox" />
+                        </div>
+        
+                        <div id="videoControlsBlock">
+                            <span>Show video controls:</span>
+                            <input type="checkbox" id="videoControlsCheckbox" />
+                        </div>
+                    </div>
                 </div>
             </div>
 

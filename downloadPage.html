@@ -3,7 +3,7 @@
     <head>
         <style>
             body {
-                background: rgb(29, 31, 33);
+                background: rgb(32, 32, 32);
             }
             input {
                 margin: 2px;
@@ -35,11 +35,11 @@
                 display: none;
                 float: left;
             }
-            #optionsBlock, #optionsBlock2, #collapsible {
+            #optionsBlock, #collapsible {
                 float: right;
             }
             #collapsible {
-                margin-left: 152px;
+                margin-left: 160px;
             }
             #hiddenOptionsContent {
                 display: none;
@@ -71,7 +71,7 @@
                 </div>
 
                 <div id="optionsBlock2">
-                    <input type="button" id="collapsible" value="&#x25ba Options" />
+                    <input type="button" id="collapsible" value="Show Options" />
                     
                     <div id="hiddenOptionsContent">
                         <div id="imageSizeBlock">
@@ -121,6 +121,26 @@
                         <div id="videoControlsBlock">
                             <span>Show video controls:</span>
                             <input type="checkbox" id="videoControlsCheckbox" />
+                        </div>
+
+                        <div id="backgroundColorBlock">
+                            <span>Background color:</span>
+                            <input type="color" id="backgroundColorInput" />
+                        </div>
+
+                        <div id="textColorBlock">
+                            <span>Text color:</span>
+                            <input type="color" id="textColorInput" />
+                        </div>
+
+                        <div id="borderColorBlock">
+                            <span>Border color:</span>
+                            <input type="color" id="borderColorInput" />
+                        </div>
+
+                        <div id="buttonColorBlock">
+                            <span>Button color:</span>
+                            <input type="color" id="buttonColorInput" />
                         </div>
                     </div>
                 </div>

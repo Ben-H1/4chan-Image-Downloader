@@ -1,6 +1,5 @@
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     var messageText = msg.text;
-    console.log(`4chan Image Downloader: Received message: ${messageText}`);
 
     switch (messageText) {
         case `getImageLinks`:
@@ -24,7 +23,6 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
             break;
 
         default:
-            console.log(`4chan Image Downloader: Unknown message`);
             break;
     }
 });

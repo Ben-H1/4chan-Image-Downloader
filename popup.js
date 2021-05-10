@@ -1,22 +1,17 @@
 var tabId;
 
 window.addEventListener("load", () => {
-    chrome.tabs.getSelected(null, function(tab) {
+    chrome.tabs.getSelected(null, function(tab) { if (chrome.runtime.lastError) {}
         tabId = tab.id;
 
-        chrome.tabs.sendMessage(tab.id, {text: 'getImageLinks'}, (imageLinks) => {
-            chrome.tabs.sendMessage(tab.id, {text: 'getCurrentBoard'}, (currentBoard) => {
-                chrome.tabs.sendMessage(tab.id, {text: `getThreadNumber`}, (threadNumber) => {
-                    chrome.tabs.sendMessage(tab.id, {text: 'getThreadSubject'}, (threadSubject) => {
-                        chrome.tabs.sendMessage(tab.id, {text: `getThreadTitle`}, (threadTitle) => {
+        chrome.tabs.sendMessage(tab.id, {text: 'getImageLinks'}, (imageLinks) => { if (chrome.runtime.lastError) {}
+            chrome.tabs.sendMessage(tab.id, {text: 'getCurrentBoard'}, (currentBoard) => { if (chrome.runtime.lastError) {}
+                chrome.tabs.sendMessage(tab.id, {text: `getThreadNumber`}, (threadNumber) => { if (chrome.runtime.lastError) {}
+                    chrome.tabs.sendMessage(tab.id, {text: 'getThreadSubject'}, (threadSubject) => { if (chrome.runtime.lastError) {}
+                        chrome.tabs.sendMessage(tab.id, {text: `getThreadTitle`}, (threadTitle) => { if (chrome.runtime.lastError) {}
     
                             createDownloadPage(imageLinks, currentBoard, threadNumber, threadSubject, threadTitle);
-                        });
-                    });
-                });
-            });
-        });
-    });
+    });});});});});});
 });
 
 function createDownloadPage(imageLinks, currentBoard, threadNumber, threadSubject, threadTitle) {
@@ -34,10 +29,5 @@ function createDownloadPage(imageLinks, currentBoard, threadNumber, threadSubjec
                         chrome.storage.sync.set({tabId: tabId}, function() {
         
                             window.open("downloadPage.html");
-                        });
-                    });
-                });
-            });
-        });
-    });
+    });});});});});});
 }

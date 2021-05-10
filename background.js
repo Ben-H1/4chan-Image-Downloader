@@ -9,8 +9,9 @@ chrome.runtime.onInstalled.addListener(function() {
                 new chrome.declarativeContent.PageStateMatcher({
                     pageUrl: {hostEquals: 'boards.4channel.org'}
                 })
-            ],
-            actions: [new chrome.declarativeContent.ShowPageAction()]
+            ], actions: [
+                new chrome.declarativeContent.ShowPageAction()
+            ]
         }]);
     });
 });

@@ -33,6 +33,11 @@ var loopVideosCheckbox     = document.querySelector(`#loopVideosCheckbox`);
 var playVideoSoundCheckbox = document.querySelector(`#playVideoSoundCheckbox`);
 var videoControlsCheckbox  = document.querySelector(`#videoControlsCheckbox`);
 
+var backgroundColorInput = document.querySelector(`#backgroundColorInput`);
+var textColorInput       = document.querySelector(`#textColorInput`);
+var borderColorInput     = document.querySelector(`#borderColorInput`);
+var buttonColorInput     = document.querySelector(`#buttonColorInput`);
+
 // top buttons
 downloadAllButton     .addEventListener(`click`, downloadAll);
 selectAllButton       .addEventListener(`click`, selectAll);
@@ -55,10 +60,10 @@ scrollToTopButton      .addEventListener(`click`, scrollToTop);
 collapsible.addEventListener(`click`, () => {
     if (hiddenOptionsContent.style.display == `block`) {
         hiddenOptionsContent.style.display = `none`;
-        collapsible.value = `\u25ba Options`;
+        collapsible.value = `Show Options`;
     } else {
         hiddenOptionsContent.style.display = `block`;
-        collapsible.value = `\u25bc Options`;
+        collapsible.value = `Hide Options`;
     }
 });
 
@@ -79,9 +84,39 @@ imageFitDropdown.addEventListener(`change`, () => {recreateImageGrid(); updateIm
 
 // video controls
 autoplayVideosCheckbox.addEventListener(`change`, () => {recreateImageGrid(); updateAutoplayVideosValue();});
-loopVideosCheckbox.addEventListener(`change`, () => {recreateImageGrid(); updateLoopVideosValue();});
+loopVideosCheckbox    .addEventListener(`change`, () => {recreateImageGrid(); updateLoopVideosValue();});
 playVideoSoundCheckbox.addEventListener(`change`, () => {recreateImageGrid(); updatePlayVideoSoundValue();});
-videoControlsCheckbox.addEventListener(`change`, () => {recreateImageGrid(); updateVideoControlsValue();});
+videoControlsCheckbox .addEventListener(`change`, () => {recreateImageGrid(); updateVideoControlsValue();});
+
+// color
+backgroundColorInput.addEventListener(`input`, () => {document.body.style.background = backgroundColorInput.value});
+backgroundColorInput.addEventListener(`change`, updateBackgroundColorValue);
+
+textColorInput.addEventListener(`input`, () => {
+    var elements = document.getElementsByTagName(`span`);
+
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.color = textColorInput.value;
+    }
+});
+textColorInput.addEventListener(`change`, updateTextColorValue);
+
+borderColorInput.addEventListener(`input`, () => {
+    var images = document.getElementsByTagName(`img`);
+    var videos = document.getElementsByTagName(`video`);
+
+    for (var i = 0; i < images.length; i++) {
+        images[i].style.borderColor = borderColorInput.value;
+    }
+
+    for (var i = 0; i < videos.length; i++) {
+        videos[i].style.borderColor = borderColorInput.value;
+    }
+});
+borderColorInput.addEventListener(`change`, updateBorderColorValue);
+
+//buttonColorInput.addEventListener(`input`, );
+buttonColorInput.addEventListener(`change`, updateButtonColorValue);
 
 // viewport
 window.addEventListener('resize', checkViewport);
@@ -103,12 +138,17 @@ var checkboxScale  = null;
 var checkboxMargin = null;
 var objectFit      = null;
 var useBorder      = true;
-var borderSize     = 2;
+var borderSize     = null;
 
 var autoplayVideos = null;
 var loopVideos     = null;
 var playVideoSound = null;
 var videoControls  = null;
+
+var backgroundColor = null;
+var textColor       = null;
+var borderColor     = null;
+var buttonColor     = null;
 
 initialiseValues();
 
@@ -152,7 +192,7 @@ function initialiseValues() {
                                     if (isEmpty(data.defaultImageSize)) {
                                         imageSize = 300;
                                     } else {
-                                        imageSize = data.defaultImageSize;
+                                        imageSize = parseInt(data.defaultImageSize);
                                     }
 
                                     imageSizeSlider.value  = imageSize;
@@ -223,12 +263,59 @@ function initialiseValues() {
 
                                                                 videoControlsCheckbox.checked = videoControls;
 
-                                                                createImages();
-    });});});});});});});});});});});});});});});
+                                                                chrome.storage.sync.get([`defaultBackgroundColor`], function(data) {
+                                                                    if (isEmpty(data.defaultBackgroundColor)) {
+                                                                        backgroundColor = `rgb(32, 32, 32)`;
+                                                                    } else {
+                                                                        backgroundColor = data.defaultBackgroundColor;
+                                                                    }
+
+                                                                    backgroundColorInput.value     = backgroundColor;
+                                                                    document.body.style.background = backgroundColor;
+
+                                                                    chrome.storage.sync.get([`defaultTextColor`], function(data) {
+                                                                        if (isEmpty(data.defaultTextColor)) {
+                                                                            textColor = `rgb(255, 255, 255)`;
+                                                                        } else {
+                                                                            textColor = data.defaultTextColor;
+                                                                        }
+
+                                                                        textColorInput.value = textColor;
+
+                                                                        var elements = document.getElementsByTagName(`span`);
+
+                                                                        for (var i = 0; i < elements.length; i++) {
+                                                                            elements[i].style.color = textColor;
+                                                                        }
+
+                                                                        chrome.storage.sync.get([`defaultBorderColor`], function(data) {
+                                                                            if (isEmpty(data.defaultBorderColor)) {
+                                                                                borderColor = `rgb(255, 255, 255)`;
+                                                                            } else {
+                                                                                borderColor = data.defaultBorderColor;
+                                                                            }
+
+                                                                            borderColorInput.value = borderColor;
+
+                                                                            var images = document.getElementsByTagName(`img`);
+                                                                            var videos = document.getElementsByTagName(`video`);
+
+                                                                            for (var i = 0; i < images.length; i++) {
+                                                                                images[i].style.borderColor = borderColorInput.value;
+                                                                            }
+                                                                        
+                                                                            for (var i = 0; i < videos.length; i++) {
+                                                                                videos[i].style.borderColor = borderColorInput.value;
+                                                                            }
+
+                                                                            chrome.storage.sync.get([`defaultButtonColor`], function(data) {
+
+                                                                                createImages();
+    });});});});});});});});});});});});});});});});});});});
 }
 
 function updateImageSizeValue() {
-    imageSize = imageSizeSlider.value;
+    imageSize = parseInt(imageSizeSlider.value);
     imageSizeBox.innerText = imageSize;
 
     chrome.storage.sync.set({defaultImageSize: imageSize});
@@ -276,6 +363,30 @@ function updateVideoControlsValue() {
     chrome.storage.sync.set({defaultVideoControls: videoControls});
 }
 
+function updateBackgroundColorValue() {
+    backgroundColor = backgroundColorInput.value;
+
+    chrome.storage.sync.set({defaultBackgroundColor: backgroundColor});
+}
+
+function updateTextColorValue() {
+    textColor = textColorInput.value;
+
+    chrome.storage.sync.set({defaultTextColor: textColor});
+}
+
+function updateBorderColorValue() {
+    borderColor = borderColorInput.value;
+
+    chrome.storage.sync.set({defaultBorderColor: borderColor});
+}
+
+function updateButtonColorValue() {
+    buttonColor = buttonColorInput.value;
+
+    chrome.storage.sync.set({defaultButtonColor: buttonColor});
+}
+
 function checkViewport() {
     if (window.innerWidth != viewportWidth) {
         recreateImageGrid();
@@ -286,14 +397,14 @@ function checkViewport() {
 
 function createImages() {
     viewportWidth  = document.documentElement.clientWidth;
-    imagesPerRow   = Math.floor(viewportWidth / imageSize);
+    imagesPerRow   = Math.floor(viewportWidth / (imageSize + (borderSize * 2) + 4 + 3));
     checkboxMargin = 8 * checkboxScale;
     objectFit      = imageFitDropdown.value;
 
     autoplayVideos = autoplayVideosCheckbox.checked;
-    loopVideos = loopVideosCheckbox.checked;
+    loopVideos     = loopVideosCheckbox.checked;
     playVideoSound = playVideoSoundCheckbox.checked;
-    videoControls = videoControlsCheckbox.checked;
+    videoControls  = videoControlsCheckbox.checked;
 
     for (var i = 0; i < imageLinks.length; i += imagesPerRow) {
         var table    = document.querySelector(`#imageTable`);
@@ -330,7 +441,7 @@ function createImages() {
                 subElement.style.objectFit = objectFit;
 
                 if (useBorder) {
-                    subElement.style.border = `${borderSize}px solid white`;
+                    subElement.style.border = `${borderSize}px solid ${borderColor}`;
                 }
 
                 subElement.style.zIndex = `1`;

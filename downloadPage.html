@@ -36,7 +36,11 @@
                 float: left;
             }
             #optionsBlock, #collapsible {
+                display: block;
                 float: right;
+            }
+            #invalidCharacterWarning {
+                display: none;
             }
             #collapsible {
                 margin-left: 160px;
@@ -68,6 +72,9 @@
                 <div id="downloadPathBlock">
                     <span>Download path: Downloads\</span>
                     <input type="text" id="downloadPathBox" />
+                    <div id="invalidCharacterWarning">
+                        <span>Download path contains an invalid character</span>
+                    </div>
                 </div>
 
                 <div id="optionsBlock2">
@@ -138,10 +145,10 @@
                             <input type="color" id="borderColorInput" />
                         </div>
 
-                        <div id="buttonColorBlock">
+                        <!-- <div id="buttonColorBlock">
                             <span>Button color:</span>
                             <input type="color" id="buttonColorInput" />
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

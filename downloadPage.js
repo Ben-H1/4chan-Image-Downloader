@@ -14,6 +14,9 @@ var downloadSelectedButton2 = document.querySelector(`#downloadSelectedButton2`)
 var refreshButton2          = document.querySelector(`#refreshButton2`);
 var scrollToTopButton       = document.querySelector(`#scrollToTopButton`);
 
+var downloadPathBox         = document.querySelector(`#downloadPathBox`);
+var invalidCharacterWarning = document.querySelector(`#invalidCharacterWarning`);
+
 var collapsible = document.querySelector(`#collapsible`);
 var hiddenOptionsContent = document.querySelector(`#hiddenOptionsContent`);
 
@@ -36,7 +39,7 @@ var videoControlsCheckbox  = document.querySelector(`#videoControlsCheckbox`);
 var backgroundColorInput = document.querySelector(`#backgroundColorInput`);
 var textColorInput       = document.querySelector(`#textColorInput`);
 var borderColorInput     = document.querySelector(`#borderColorInput`);
-var buttonColorInput     = document.querySelector(`#buttonColorInput`);
+//var buttonColorInput     = document.querySelector(`#buttonColorInput`);
 
 // top buttons
 downloadAllButton     .addEventListener(`click`, downloadAll);
@@ -55,6 +58,9 @@ invertSelectionButton2 .addEventListener(`click`, invertSelection);
 downloadSelectedButton2.addEventListener(`click`, downloadSelected);
 refreshButton2         .addEventListener(`click`, () => {refreshImages(true)});
 scrollToTopButton      .addEventListener(`click`, scrollToTop);
+
+// download path
+downloadPathBox.addEventListener(`input`, checkDownloadPath);
 
 // collapsible options
 collapsible.addEventListener(`click`, () => {
@@ -92,34 +98,19 @@ videoControlsCheckbox .addEventListener(`change`, () => {recreateImageGrid(); up
 backgroundColorInput.addEventListener(`input`, () => {document.body.style.background = backgroundColorInput.value});
 backgroundColorInput.addEventListener(`change`, updateBackgroundColorValue);
 
-textColorInput.addEventListener(`input`, () => {
-    var elements = document.getElementsByTagName(`span`);
-
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].style.color = textColorInput.value;
-    }
-});
+textColorInput.addEventListener(`input`, () => {changeTextColor(textColorInput.value);});
 textColorInput.addEventListener(`change`, updateTextColorValue);
 
-borderColorInput.addEventListener(`input`, () => {
-    var images = document.getElementsByTagName(`img`);
-    var videos = document.getElementsByTagName(`video`);
-
-    for (var i = 0; i < images.length; i++) {
-        images[i].style.borderColor = borderColorInput.value;
-    }
-
-    for (var i = 0; i < videos.length; i++) {
-        videos[i].style.borderColor = borderColorInput.value;
-    }
-});
+borderColorInput.addEventListener(`input`, () => {changeBorderColor(borderColorInput.value);});
 borderColorInput.addEventListener(`change`, updateBorderColorValue);
 
 //buttonColorInput.addEventListener(`input`, );
-buttonColorInput.addEventListener(`change`, updateButtonColorValue);
+//buttonColorInput.addEventListener(`change`, updateButtonColorValue);
 
 // viewport
 window.addEventListener('resize', checkViewport);
+
+var canDownload = true;
 
 var imageLinks    = null;
 var tabId         = null;
@@ -265,7 +256,7 @@ function initialiseValues() {
 
                                                                 chrome.storage.sync.get([`defaultBackgroundColor`], function(data) {
                                                                     if (isEmpty(data.defaultBackgroundColor)) {
-                                                                        backgroundColor = `rgb(32, 32, 32)`;
+                                                                        backgroundColor = `#202020`; // rgb(32, 32, 32)
                                                                     } else {
                                                                         backgroundColor = data.defaultBackgroundColor;
                                                                     }
@@ -275,43 +266,44 @@ function initialiseValues() {
 
                                                                     chrome.storage.sync.get([`defaultTextColor`], function(data) {
                                                                         if (isEmpty(data.defaultTextColor)) {
-                                                                            textColor = `rgb(255, 255, 255)`;
+                                                                            textColor = `#FFFFFF`; // rgb(255, 255, 255)
                                                                         } else {
                                                                             textColor = data.defaultTextColor;
                                                                         }
 
                                                                         textColorInput.value = textColor;
 
-                                                                        var elements = document.getElementsByTagName(`span`);
-
-                                                                        for (var i = 0; i < elements.length; i++) {
-                                                                            elements[i].style.color = textColor;
-                                                                        }
+                                                                        changeTextColor(textColor);
 
                                                                         chrome.storage.sync.get([`defaultBorderColor`], function(data) {
                                                                             if (isEmpty(data.defaultBorderColor)) {
-                                                                                borderColor = `rgb(255, 255, 255)`;
+                                                                                borderColor = `#FFFFFF`; // rgb(255, 255, 255)
                                                                             } else {
                                                                                 borderColor = data.defaultBorderColor;
                                                                             }
 
                                                                             borderColorInput.value = borderColor;
 
-                                                                            var images = document.getElementsByTagName(`img`);
-                                                                            var videos = document.getElementsByTagName(`video`);
-
-                                                                            for (var i = 0; i < images.length; i++) {
-                                                                                images[i].style.borderColor = borderColorInput.value;
-                                                                            }
-                                                                        
-                                                                            for (var i = 0; i < videos.length; i++) {
-                                                                                videos[i].style.borderColor = borderColorInput.value;
-                                                                            }
+                                                                            changeBorderColor(borderColor);
 
                                                                             chrome.storage.sync.get([`defaultButtonColor`], function(data) {
+                                                                                updateButtonColorValue();
 
                                                                                 createImages();
     });});});});});});});});});});});});});});});});});});});
+}
+
+function checkDownloadPath() {
+    var ignore = `${downloadFolder}\\${currentBoard}\\`
+    var name = downloadPathBox.value.substring(ignore.length);
+    
+    if (containsInvalidCharacter(name)) {
+        canDownload = false;
+        invalidCharacterWarning.style.display = `block`;
+    } else {
+        canDownload = true;
+        invalidCharacterWarning.style.display = `none`;
+    }
 }
 
 function updateImageSizeValue() {
@@ -366,13 +358,36 @@ function updateVideoControlsValue() {
 function updateBackgroundColorValue() {
     backgroundColor = backgroundColorInput.value;
 
+    updateButtonColorValue();
+
     chrome.storage.sync.set({defaultBackgroundColor: backgroundColor});
+}
+
+function changeTextColor(color) {
+    var elements = document.getElementsByTagName(`span`);
+
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.color = color;
+    }
 }
 
 function updateTextColorValue() {
     textColor = textColorInput.value;
 
     chrome.storage.sync.set({defaultTextColor: textColor});
+}
+
+function changeBorderColor(color) {
+    var images = document.getElementsByTagName(`img`);
+    var videos = document.getElementsByTagName(`video`);
+
+    for (var i = 0; i < images.length; i++) {
+        images[i].style.borderColor = color;
+    }
+
+    for (var i = 0; i < videos.length; i++) {
+        videos[i].style.borderColor = color;
+    }
 }
 
 function updateBorderColorValue() {
@@ -382,7 +397,13 @@ function updateBorderColorValue() {
 }
 
 function updateButtonColorValue() {
-    buttonColor = buttonColorInput.value;
+    if (lightnessFromHex(backgroundColor) > 50) {
+        setButtonsToBlack();
+        buttonColor = `black`;
+    } else {
+        setButtonsToWhite();
+        buttonColor = `white`;
+    }
 
     chrome.storage.sync.set({defaultButtonColor: buttonColor});
 }
@@ -482,10 +503,12 @@ function check(element) {
 }
 
 function downloadAll() {
-    document.querySelectorAll(`.checkbox`).forEach((element) => {
-        var link = element.childNodes[0];
-        downloadFile(link.href);
-    });
+    if (canDownload) {
+        document.querySelectorAll(`.checkbox`).forEach((element) => {
+            var link = element.childNodes[0];
+            downloadFile(link.href);
+        });
+    }
 }
 
 function selectAll() {
@@ -507,12 +530,14 @@ function invertSelection() {
 }
 
 function downloadSelected() {
-    document.querySelectorAll(`.checkbox`).forEach((element) => {
-        if (element.checked) {
-            var link = element.childNodes[0];
-            downloadFile(link.href);
-        }
-    });
+    if (canDownload) {
+        document.querySelectorAll(`.checkbox`).forEach((element) => {
+            if (element.checked) {
+                var link = element.childNodes[0];
+                downloadFile(link.href);
+            }
+        });
+    }
 }
 
 function downloadFile(file) {
@@ -571,15 +596,16 @@ function scrollToTop() {
 
 function removeInvalidCharactersFromThreadText(threadText) {
     var newThreadText = ``;
-    var invalidChars   = [`\n`, `\\`, `/`, `:`, `*`, `?`, `"`, `<`, `>`, `|`, `.`, `~`];
-
+    
     for (var i = 0; i < threadText.length; i++) {
         var currentChar = threadText.charAt(i);
 
-        if (! invalidChars.includes(currentChar)) {
+        if (! characterIsInvalid(currentChar)) {
             newThreadText += currentChar;
         } else {
-            if (i != threadText.length - 1) {
+            if (currentChar != `\n`) {
+                newThreadText += `_`
+            } else if (i != threadText.length - 1) {
                 newThreadText += ` `;
             }
         }
@@ -588,10 +614,97 @@ function removeInvalidCharactersFromThreadText(threadText) {
     return newThreadText;
 }
 
+function characterIsInvalid(char) {
+    var invalidChars   = [`\n`, `\\`, `/`, `:`, `*`, `?`, `"`, `<`, `>`, `|`, `.`, `~`];
+
+    if (invalidChars.includes(char)) {
+        return true;
+    }
+
+    return false;
+}
+
+function containsInvalidCharacter(text) {
+    for (var i = 0; i < text.length; i++) {
+        var currentChar = text.charAt(i);
+
+        if (characterIsInvalid(currentChar)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function setButtonsToBlack() {
+    downloadAllButton     .src = `images/Download All Black.png`;
+    selectAllButton       .src = `images/Select All Black.png`;
+    selectNoneButton      .src = `images/Select None Black.png`;
+    invertSelectionButton .src = `images/Invert Selection Black.png`;
+    downloadSelectedButton.src = `images/Download Selected Black.png`;
+    refreshButton         .src = `images/Refresh Black.png`;
+    scrollToBottomButton  .src = `images/Scroll to Bottom Black.png`;
+
+    downloadAllButton2     .src = `images/Download All Black.png`;
+    selectAllButton2       .src = `images/Select All Black.png`;
+    selectNoneButton2      .src = `images/Select None Black.png`;
+    invertSelectionButton2 .src = `images/Invert Selection Black.png`;
+    downloadSelectedButton2.src = `images/Download Selected Black.png`;
+    refreshButton2         .src = `images/Refresh Black.png`;
+    scrollToTopButton      .src = `images/Scroll to Top Black.png`;
+}
+
+function setButtonsToWhite() {
+    downloadAllButton     .src = `images/Download All White.png`;
+    selectAllButton       .src = `images/Select All White.png`;
+    selectNoneButton      .src = `images/Select None White.png`;
+    invertSelectionButton .src = `images/Invert Selection White.png`;
+    downloadSelectedButton.src = `images/Download Selected White.png`;
+    refreshButton         .src = `images/Refresh White.png`;
+    scrollToBottomButton  .src = `images/Scroll to Bottom White.png`;
+
+    downloadAllButton2     .src = `images/Download All White.png`;
+    selectAllButton2       .src = `images/Select All White.png`;
+    selectNoneButton2      .src = `images/Select None White.png`;
+    invertSelectionButton2 .src = `images/Invert Selection White.png`;
+    downloadSelectedButton2.src = `images/Download Selected White.png`;
+    refreshButton2         .src = `images/Refresh White.png`;
+    scrollToTopButton      .src = `images/Scroll to Top White.png`;
+}
+
 function isEmpty(variable) {
     if ((variable == `` || variable == null || variable == undefined || typeof variable == undefined) && variable != true && variable != false) {
         return true;
     }
 
     return false;
+}
+
+function lightnessFromHex(hex) {
+    var rgb = hexToRgb(hex);
+
+    var r = rgb[0];
+    var g = rgb[1];
+    var b = rgb[2];
+
+    var rPrime = r / 255;
+    var gPrime = g / 255;
+    var bPrime = b / 255;
+
+    var cMax = Math.max(rPrime, gPrime, bPrime);
+    var cMin = Math.min(rPrime, gPrime, bPrime);
+
+    var lightness = ((cMax + cMin) / 2) * 100;
+    lightness = Math.round((lightness + Number.EPSILON) * 100) / 100;
+
+    return lightness;
+}
+
+function hexToRgb(hex) {
+    var rgb = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
+               ,(m, r, g, b) => '#' + r + r + g + g + b + b)
+       .substring(1).match(/.{2}/g)
+       .map(x => parseInt(x, 16));
+    
+    return rgb;
 }

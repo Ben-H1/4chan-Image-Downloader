@@ -34,4 +34,26 @@ To select all images, click on the Select All button.
 ### Unselect all images
 To unselect all images, click on the Select None button.
 
-###
+### Invert selection
+To invert the selection, click on the Invert Selection button.
+
+### Download selected images
+To downloaded selected images, click on the Download Selected button.
+
+### Refresh images
+To refresh the images and see any new posts, click on the Refresh button.
+
+### Scrolling to the bottom of the page
+To scroll to the bottom of the page, click on the Scroll to Bottom button.
+
+### Scrolling to the top of the page
+To scroll to the top of the page, click on the Scroll to Top button.
+
+### Selecting images
+To select an image, click on an image or its corresponding checkbox to select the image.
+
+### Changing the download path
+To change the download path, edit the text in the download path box.
+
+### Changing options
+To change options, click on the Show Options button and edit the options. These options are saved automatically.

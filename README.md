@@ -1,4 +1,4 @@
-# 4chan Image Downloader
+<h1>4chan Image Downloader</h1>
 
 <p align="center">
     <a href="https://github.com/Ben-H1/4chan-Image-Downloader/releases">

@@ -25,3 +25,4 @@ A simple Chrome extension allowing you to easily download images from a 4chan or
 7. 4chan Image Downloader will appear in the list of extensions. Enjoy!
 
 ## Installing from the Google Chrome Web Store
+This extension currently doesn't exist on the Google Chrome Web Store.

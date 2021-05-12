@@ -131,6 +131,10 @@ var objectFit      = null;
 var useBorder      = true;
 var borderSize     = null;
 
+var downloadedHue    = -80;
+var downloadedFilter = `hue-rotate(${downloadedHue}deg)`;
+var downloadedImages = [];
+
 var autoplayVideos = null;
 var loopVideos     = null;
 var playVideoSound = null;
@@ -477,6 +481,10 @@ function createImages() {
                 checkbox.style.transform  = `scale(${checkboxScale})`;
                 checkbox.style.marginTop  = `${checkboxMargin}px`;
                 checkbox.style.marginLeft = `${checkboxMargin}px`;
+                if (downloadedImages.includes(currentImageLink)) {
+                    checkbox.checked = true;
+                    checkbox.style.filter = downloadedFilter;
+                }
                 element.appendChild(checkbox);
 
                 var link = document.createElement(`a`);
@@ -505,8 +513,10 @@ function check(element) {
 function downloadAll() {
     if (canDownload) {
         document.querySelectorAll(`.checkbox`).forEach((element) => {
-            var link = element.childNodes[0];
-            downloadFile(link.href);
+            if (element.style.filter != downloadedFilter) {
+                var link = element.childNodes[0];
+                downloadFile(link.href, element);
+            }
         });
     }
 }
@@ -533,14 +543,17 @@ function downloadSelected() {
     if (canDownload) {
         document.querySelectorAll(`.checkbox`).forEach((element) => {
             if (element.checked) {
-                var link = element.childNodes[0];
-                downloadFile(link.href);
+                if (element.style.filter != downloadedFilter) {
+                    var link = element.childNodes[0];
+                    downloadFile(link.href, element);
+                }
             }
         });
     }
+    console.log(downloadedImages);
 }
 
-function downloadFile(file) {
+function downloadFile(file, checkbox) {
     var fileNameParts = file.split(`/`);
     var fileName = fileNameParts[fileNameParts.length - 1];
     var path = document.querySelector(`#downloadPathBox`).value;
@@ -551,6 +564,9 @@ function downloadFile(file) {
     console.log(`Downloading: ${fileName}`);
 
     chrome.downloads.download({url: file, filename: path}, (result) => {
+        downloadedImages.push(file);
+        checkbox.checked = true;
+        checkbox.style.filter = downloadedFilter;
         console.log(`${fileName} downloaded!`);
     });
 }
@@ -575,9 +591,15 @@ function refreshImages(scrollToBottomFlag) {
                 imageLinks = newImageLinks;
 
                 chrome.storage.sync.set({imageLinks: imageLinks}, () => {
+                    var scroll = window.pageYOffset;
+                    console.log(scroll);
                     recreateImageGrid();
     
                     if (scrollToBottomFlag) {
+                        var html = document.getElementsByTagName(`html`)[0];
+                        html.style.scrollBehavior = `auto`;
+                        window.scrollTo(0, scroll);
+                        html.style.scrollBehavior = `smooth`;
                         scrollToBottom();
                     }
                 });
@@ -587,7 +609,7 @@ function refreshImages(scrollToBottomFlag) {
 }
 
 function scrollToBottom() {
-    window.scrollTo(0,document.documentElement.scrollHeight);
+    window.scrollTo(0, document.documentElement.scrollHeight);
 }
 
 function scrollToTop() {

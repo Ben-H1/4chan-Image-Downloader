@@ -25,6 +25,12 @@ A simple Chrome extension allowing you to easily download images from a 4chan or
 This extension currently doesn't exist on the Google Chrome Web Store.
 
 # Usage
+While in a 4chan or 4channel thread in the current tab, click on the extension icon in the top-right-hand corner of the Google Chrome window. This will open a new tab, where images from the open thread can be downloaded. 
+Images can be selected and downloaded, and options can be changed. 
+Images are automatically downloaded to Downloads/4chan, and are sorted by board and thread information. 
+Images which have already been downloaded are displayed with a green checkbox.
+Images must be refreshed using the Refresh button on the page, rather than refreshing the page itself.
+
 ### Downloading all images
 To download all images, click on the Download All button.
 

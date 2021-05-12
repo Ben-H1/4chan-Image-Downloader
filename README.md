@@ -1,5 +1,5 @@
 <p>
-    <img src="images/icon1000.png" />
+    <span><img src="images/icon1000.png" /></span>
     <h1>4chan Image Downloader</h1>
 </p>
 

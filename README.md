@@ -8,7 +8,7 @@
         <img src="https://img.shields.io/github/languages/code-size/Ben-H1/4chan-Image-Downloader" />
     </a>
     <a href="">
-        <img src="https://img.shields.io/github/Ben-H1/4chan-Image-Downloader/license" />
+        <img src="https://img.shields.io/github/license/Ben-H1/4chan-Image-Downloader" />
     </a>
 </p>
 

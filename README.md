@@ -26,3 +26,12 @@ This extension currently doesn't exist on the Google Chrome Web Store.
 
 # Usage
 ### Downloading all images
+To download all images, click on the Download All button.
+
+### Selecting all images
+To select all images, click on the Select All button.
+
+### Unselect all images
+To unselect all images, click on the Select None button.
+
+###

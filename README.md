@@ -24,5 +24,5 @@ A simple Chrome extension allowing you to easily download images from a 4chan or
 ## Installing from the Google Chrome Web Store
 This extension currently doesn't exist on the Google Chrome Web Store.
 
-#Usage
+# Usage
 ##### Downloading all images

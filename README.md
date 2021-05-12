@@ -8,6 +8,6 @@ A simple Chrome extension allowing you to easily download images from a 4chan or
 
 # Installation
 ## Installing from GitHub
-- Download the [latest release](https://github.com/Ben-H1/4chan-Image-Downloader/releases) and unzip it to a directory of your choice.
+1. Download the [latest release](https://github.com/Ben-H1/4chan-Image-Downloader/releases) and unzip it to a directory of your choice.
 
 ## Installing from the Google Chrome Web Store

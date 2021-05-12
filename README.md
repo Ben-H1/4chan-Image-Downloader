@@ -1,6 +1,6 @@
-<p align="center">
+<div align="center">
     <h1>4chan Image Downloader</h1>
-</p>
+</div>
 
 <p align="center">
     <a href="https://github.com/Ben-H1/4chan-Image-Downloader/releases">

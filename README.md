@@ -1,6 +1,6 @@
 <div>
     <img src="images/icon1000.png" width="15" height="15" />
-    <span><h1>4chan Image Downloader</h1><span>
+    <span>4chan Image Downloader<span>
 </div>
 
 <p align="center">

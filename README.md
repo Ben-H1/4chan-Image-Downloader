@@ -7,9 +7,6 @@
     <a href="">
         <img src="https://img.shields.io/github/languages/code-size/Ben-H1/4chan-Image-Downloader" />
     </a>
-    <a href="">
-        <img src="https://img.shields.io/github/license/Ben-H1/4chan-Image-Downloader" />
-    </a>
 </p>
 
 A simple Chrome extension allowing you to easily download images from a 4chan or 4channel thread.

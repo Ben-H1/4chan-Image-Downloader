@@ -1,7 +1,6 @@
-<div align="center">
-    <img src="images/icon1000.png" width="15" height="15" />
-    <span style="font-weight:bold">4chan Image Downloader</span>
-</div>
+<p align="center">
+    <h1>4chan Image Downloader</h1>
+</p
 
 <p align="center">
     <a href="https://github.com/Ben-H1/4chan-Image-Downloader/releases">

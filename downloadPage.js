@@ -131,6 +131,8 @@ var objectFit      = null;
 var useBorder      = true;
 var borderSize     = null;
 
+var selectedImages   = [];
+
 var downloadedHue    = -80;
 var downloadedFilter = `hue-rotate(${downloadedHue}deg)`;
 var downloadedImages = [];
@@ -481,6 +483,9 @@ function createImages() {
                 checkbox.style.transform  = `scale(${checkboxScale})`;
                 checkbox.style.marginTop  = `${checkboxMargin}px`;
                 checkbox.style.marginLeft = `${checkboxMargin}px`;
+                if (selectedImages.includes(currentImageLink)) {
+                    checkbox.checked = true;
+                }
                 if (downloadedImages.includes(currentImageLink)) {
                     checkbox.checked = true;
                     checkbox.style.filter = downloadedFilter;
@@ -492,6 +497,7 @@ function createImages() {
                 link.style.display = `none`;
                 checkbox.appendChild(link);
 
+                checkbox.addEventListener(`click`, check2);
                 subElement.addEventListener(`click`, check);
                 element.appendChild(subElement);
                 tableData.appendChild(element);
@@ -507,7 +513,25 @@ function createImages() {
 
 function check(element) {
     var checkbox = element.target.parentNode.childNodes[0];
+    var link = checkbox.childNodes[0].href;
     checkbox.checked = ! checkbox.checked;
+
+    if (checkbox.checked) {
+        selectedImages.push(link);
+    } else {
+        selectedImages.splice(selectedImages.indexOf(link), 1);
+    }
+}
+
+function check2(element) {
+    var checkbox = element.target;
+    var link = checkbox.childNodes[0].href;
+
+    if (checkbox.checked) {
+        selectedImages.push(link);
+    } else {
+        selectedImages.splice(selectedImages.indexOf(link), 1);
+    }
 }
 
 function downloadAll() {
@@ -550,7 +574,6 @@ function downloadSelected() {
             }
         });
     }
-    console.log(downloadedImages);
 }
 
 function downloadFile(file, checkbox) {
@@ -592,7 +615,6 @@ function refreshImages(scrollToBottomFlag) {
 
                 chrome.storage.sync.set({imageLinks: imageLinks}, () => {
                     var scroll = window.pageYOffset;
-                    console.log(scroll);
                     recreateImageGrid();
     
                     if (scrollToBottomFlag) {

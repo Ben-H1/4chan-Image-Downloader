@@ -553,7 +553,9 @@ function selectAll() {
 
 function selectNone() {
     document.querySelectorAll(`.checkbox`).forEach((element) => {
-        element.checked = false;
+        if (element.style.filter != downloadedFilter) {
+            element.checked = false;
+        }
     });
 }
 

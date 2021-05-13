@@ -559,8 +559,18 @@ function selectNone() {
 
 function invertSelection() {
     document.querySelectorAll(`.checkbox`).forEach((element) => {
-        element.checked = ! element.checked;
+        if (element.style.filter != downloadedFilter) {
+            var link = element.childNodes[0].href;
+            element.checked = ! element.checked;
+
+            if (element.checked) {
+                selectedImages.push(link);
+            } else {
+                selectedImages.splice(selectedImages.indexOf(link), 1);
+            }
+        }
     });
+    console.log(selectedImages);
 }
 
 function downloadSelected() {

@@ -14,6 +14,11 @@ var downloadSelectedButton2 = document.querySelector(`#downloadSelectedButton2`)
 var refreshButton2          = document.querySelector(`#refreshButton2`);
 var scrollToTopButton       = document.querySelector(`#scrollToTopButton`);
 
+var numberOfImagesBox            = document.querySelector(`#numberOfImagesBox`);
+var numberOfImagesBox2           = document.querySelector(`#numberOfImagesBox2`);
+var numberOfDownloadedImagesBox  = document.querySelector(`#numberOfDownloadedImagesBox`);
+var numberOfDownloadedImagesBox2 = document.querySelector(`#numberOfDownloadedImagesBox2`);
+
 var downloadPathBox         = document.querySelector(`#downloadPathBox`);
 var invalidCharacterWarning = document.querySelector(`#invalidCharacterWarning`);
 
@@ -136,6 +141,7 @@ var selectedImages   = [];
 var downloadedHue    = -80;
 var downloadedFilter = `hue-rotate(${downloadedHue}deg)`;
 var downloadedImages = [];
+var numberOfDownloadedImages = 0;
 
 var autoplayVideos = null;
 var loopVideos     = null;
@@ -508,6 +514,11 @@ function createImages() {
         table.appendChild(tableRow);
     }
 
+    numberOfImagesBox.innerText  = imageLinks.length;
+    numberOfImagesBox2.innerText = imageLinks.length;
+    numberOfDownloadedImagesBox.innerText  = numberOfDownloadedImages;
+    numberOfDownloadedImagesBox2.innerText = numberOfDownloadedImages;
+
     document.querySelector(`#topButtons`).style.display = `block`;
 }
 
@@ -598,11 +609,15 @@ function downloadFile(file, checkbox) {
     path += fileName;
     console.log(`Downloading: ${fileName}`);
 
-    chrome.downloads.download({url: file, filename: path}, (result) => {
+    chrome.downloads.download({url: file, filename: path}, () => {
         downloadedImages.push(file);
         checkbox.checked = true;
         checkbox.style.filter = downloadedFilter;
         console.log(`${fileName} downloaded!`);
+
+        numberOfDownloadedImages += 1;
+        numberOfDownloadedImagesBox.innerText  = numberOfDownloadedImages;
+        numberOfDownloadedImagesBox2.innerText = numberOfDownloadedImages;
     });
 }
 

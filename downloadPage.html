@@ -12,6 +12,11 @@
                 margin: 2px;
                 outline: none;
             }
+            span {
+                color: white;
+                vertical-align: top;
+                font-size: 16px;
+            }
             .checkbox {
                 cursor: pointer;
                 transition: filter 0.5s;
@@ -20,6 +25,9 @@
                 width:  50px;
                 height: 50px;
                 margin-right: 20px;
+            }
+            #numberOfImagesBlock, #numberOfImagesBlock2 {
+                float: left;
             }
             #selectAllButton, #selectAllButton2 {
                 margin-right: 15px;
@@ -55,11 +63,6 @@
             #hiddenOptionsContent {
                 display: none;
             }
-            span {
-                color: white;
-                vertical-align: top;
-                font-size: 16px;
-            }
         </style>
         <title>4chan Image Downloader</title>
     </head>
@@ -73,6 +76,11 @@
                 <input type="image" src="images/Download Selected White.png" id="downloadSelectedButton" class="topButtons" title="Download Selected" alt="Download Selected" />
                 <input type="image" src="images/Refresh White.png"           id="refreshButton"          class="topButtons" title="Refresh"           alt="Refresh" />
                 <input type="image" src="images/Scroll to Bottom White.png"  id="scrollToBottomButton"   class="topButtons" title="Scroll to Bottom"  alt="Scroll to Bottom" />
+            </div>
+
+            <div id="numberOfImagesBlock">
+                <span>Number of images in thread:</span>  <span id="numberOfImagesBox"></span>           <br />
+                <span>Number of downloaded images:</span> <span id="numberOfDownloadedImagesBox"></span>
             </div>
 
             <div id="optionsBlock">
@@ -189,6 +197,11 @@
                 <input type="image" src="images/Download Selected White.png" id="downloadSelectedButton2" class="bottomButtons" title="Download Selected" alt="Download Selected" />
                 <input type="image" src="images/Refresh White.png"           id="refreshButton2"          class="bottomButtons" title="Refresh"           alt="Refresh" />
                 <input type="image" src="images/Scroll to Top White.png"     id="scrollToTopButton"       class="bottomButtons" title="Scroll to Top"     alt="Scroll to Top" />
+            </div>
+
+            <div id="numberOfImagesBlock2">
+                <span>Number of images in thread:</span>  <span id="numberOfImagesBox2"></span>           <br />
+                <span>Number of downloaded images:</span> <span id="numberOfDownloadedImagesBox2"></span>
             </div>
 
             <div class="normalButtons">
